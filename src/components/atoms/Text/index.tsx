@@ -9,7 +9,7 @@ interface ITextProps extends ITextComponent {
 const formatHighlight = (children: React.ReactNode, highlight: string) => {
   const text = children?.toString() ?? highlight;
   const splitText = text.split(
-    RegExp(`(?=${highlight})|(?<=${highlight})`, "gi")
+    RegExp(`(?=${highlight})|(?<=${highlight})`, "i")
   );
 
   const formattedText = splitText.map((text: string, i: number) => {
