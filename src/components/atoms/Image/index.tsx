@@ -2,11 +2,20 @@ import NextImage from "next/image";
 import { Container, IContainer } from "./styles";
 
 interface ImageProps extends IContainer {
-  children: React.ReactNode;
+  src: string;
+  alt: string;
 }
 
-export const Image: React.FC<ImageProps> = ({ children, ...props }) => (
-  <Container {...props}>
-    <NextImage src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+const Image: React.FC<ImageProps> = ({
+  src,
+  alt,
+  width = "100px",
+  height = "100px",
+  ...props
+}) => (
+  <Container {...props} width={width} height={height}>
+    <NextImage loader={() => src} {...{ src, alt, width, height }} />
   </Container>
 );
+
+export default Image;
