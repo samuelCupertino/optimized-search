@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { UserCard } from "../components/molecules";
+import { UserCard, Search } from "../components/molecules";
 
 const Home: NextPage = () => {
   return (
@@ -12,6 +12,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
+        <Search />
         <UserCard
           avatar="https://i.pravatar.cc/300"
           name="Samuel Cupertino"

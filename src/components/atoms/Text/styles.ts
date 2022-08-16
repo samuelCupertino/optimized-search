@@ -1,16 +1,20 @@
 import styled, { css } from 'styled-components'
 
 export interface ITextComponent {
-  type?: "title";
-  margin?: string;
-  padding?: string;
+  type?: "title"
+  margin?: string
+  padding?: string
+  color?: string
+  bgColor?: string
+  fontSize?: string
 }
 
 export const TextComponent = styled.p<ITextComponent>`
-  font-size: ${({ theme }) => theme.sizes.small};
+  font-size: ${({ theme, fontSize }) => fontSize || theme.sizes.small };
   margin: ${({ margin })=> margin};
   padding: ${({ padding })=> padding};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: ${({ theme, color }) => color || theme.colors.textSecondary};
+  background: ${({ bgColor }) => bgColor};
 
   ${({ type })=> type === 'title' && css`
     font-size: ${({ theme }) => theme.sizes.medium};
