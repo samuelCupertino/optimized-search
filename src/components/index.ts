@@ -1,4 +1,4 @@
-import { Image, Text } from "./atoms";
-import { UserCard } from "./molecules";
-
-export { Image, Text, UserCard };
+export * from "./atoms";
+export * from "./molecules";
+export * from "./organisms";
+export * from "./templates";
