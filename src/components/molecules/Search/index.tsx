@@ -1,5 +1,5 @@
-import { useId } from "react";
-import theme from "../../../styles/theme";
+import { useContext, useId } from "react";
+import { ThemeContext } from "styled-components";
 import { Text, Input } from "../../atoms";
 import { Container, IContainer } from "./styles";
 
@@ -9,7 +9,9 @@ interface ISearchProps extends IContainer {
 }
 
 const Search: React.FC<ISearchProps> = ({ value, onChange, ...props }) => {
+  const theme = useContext(ThemeContext);
   const inputId = useId();
+
   return (
     <Container {...props}>
       <Text

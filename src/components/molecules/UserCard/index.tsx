@@ -1,4 +1,5 @@
-import theme from "../../../styles/theme";
+import { useContext } from "react";
+import { ThemeContext } from "styled-components";
 import { Image, Text } from "../../atoms";
 import { Container, IContainer, AvatarWrapper, TextWrapper } from "./styles";
 
@@ -15,25 +16,29 @@ const UserCard: React.FC<IUserCardProps> = ({
   email,
   highlight,
   ...props
-}) => (
-  <Container {...props}>
-    <AvatarWrapper>
-      <Image
-        src={avatar}
-        alt={`foto de ${name}`}
-        border={`3px solid ${theme.colors.bgPrimary}`}
-        borderRadius="50%"
-      />
-    </AvatarWrapper>
-    <TextWrapper>
-      <Text as="h2" type="title" padding="10px" highlight={highlight}>
-        {name}
-      </Text>
-      <Text as="p" padding="10px">
-        {email}
-      </Text>
-    </TextWrapper>
-  </Container>
-);
+}) => {
+  const theme = useContext(ThemeContext);
+
+  return (
+    <Container {...props}>
+      <AvatarWrapper>
+        <Image
+          src={avatar}
+          alt={`foto de ${name}`}
+          border={`3px solid ${theme.colors.bgPrimary}`}
+          borderRadius="50%"
+        />
+      </AvatarWrapper>
+      <TextWrapper>
+        <Text as="h2" type="title" padding="10px" highlight={highlight}>
+          {name}
+        </Text>
+        <Text as="p" padding="10px">
+          {email}
+        </Text>
+      </TextWrapper>
+    </Container>
+  );
+};
 
 export default UserCard;
