@@ -15,6 +15,12 @@ export const Container = styled.article<IContainer>`
   background: ${({ theme }) => theme.colors.bgSecondary};
   margin: ${({ margin })=> margin};
   padding: ${({ padding })=> padding};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 `
 
 export const AvatarWrapper = styled.div`

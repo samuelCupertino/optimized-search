@@ -7,6 +7,7 @@ export interface ITextComponent {
   color?: string
   bgColor?: string
   fontSize?: string
+  wordBreak?: 'break-all' | 'break-word'
 }
 
 export const TextComponent = styled.p<ITextComponent>`
@@ -15,6 +16,7 @@ export const TextComponent = styled.p<ITextComponent>`
   padding: ${({ padding })=> padding};
   color: ${({ theme, color }) => color || theme.colors.textSecondary};
   background: ${({ bgColor }) => bgColor};
+  word-break: ${({ wordBreak }) => wordBreak};
 
   ${({ type })=> type === 'title' && css`
     font-size: ${({ theme }) => theme.sizes.medium};

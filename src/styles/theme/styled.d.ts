@@ -12,6 +12,14 @@ declare module 'styled-components' {
       giant: string
     },
 
+    breakpoints: {
+      xs: string
+      sm: string
+      md: string
+      lg: string
+      xl: string
+    },
+
     colors: {
       textPrimary: string
       textSecondary: string

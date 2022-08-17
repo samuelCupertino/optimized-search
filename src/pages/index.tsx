@@ -10,10 +10,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Busca de usuários aleatórios" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main>
-        <HomeScreen />
-      </main>
+      <HomeScreen />
     </>
   );
 };

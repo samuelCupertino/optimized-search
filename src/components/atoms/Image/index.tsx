@@ -14,7 +14,7 @@ const Image: React.FC<ImageProps> = ({
   ...props
 }) => (
   <Container {...props} width={width} height={height}>
-    <img {...{ src, alt, width, height }} />
+    <NextImage loader={() => src} {...{ src, alt, width, height }} />
   </Container>
 );
 

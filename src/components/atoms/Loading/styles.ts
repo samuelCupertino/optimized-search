@@ -18,7 +18,7 @@ export const Container = styled.div<IContainerProps>`
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background: conic-gradient(var(--bgColorTertiary), var(--bgColorPrimary));
+  background: conic-gradient(${({theme})=> theme.colors.bgTertiary}, ${({theme})=> theme.colors.bgPrimary});
   margin: ${({ margin }) => margin};
   animation: ${animRotate} 1s linear infinite;
 
@@ -27,7 +27,7 @@ export const Container = styled.div<IContainerProps>`
     width: 75%;
     height: 75%;
     border-radius: 50%;
-    background: var(--bgColorTertiary);
+    background: ${({theme})=> theme.colors.bgTertiary};
   }
 `
 

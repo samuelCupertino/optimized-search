@@ -33,7 +33,7 @@ const UserCard: React.FC<IUserCardProps> = ({
         <Text as="h2" type="title" padding="10px" highlight={highlight}>
           {name}
         </Text>
-        <Text as="p" padding="10px">
+        <Text as="p" padding="10px" wordBreak="break-word">
           {email}
         </Text>
       </TextWrapper>

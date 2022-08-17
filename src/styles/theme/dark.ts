@@ -1,4 +1,6 @@
-const dark = {
+import { DefaultTheme } from 'styled-components'
+
+const dark:DefaultTheme = {
   title: 'dark',
 
   sizes: {
@@ -7,6 +9,14 @@ const dark = {
     medium: "16px",
     big: "18px",
     giant: "24px",
+  },
+
+  breakpoints: {
+    xs: "340px",
+    sm: "576px",
+    md: "768px",
+    lg: "992px",
+    xl: "1200px",
   },
 
   colors: {
