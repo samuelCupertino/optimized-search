@@ -2,14 +2,14 @@ import theme from "../../../styles/theme";
 import { Image, Text } from "../../atoms";
 import { Container, IContainer, AvatarWrapper, TextWrapper } from "./styles";
 
-interface IUserProps extends IContainer {
+export interface IUserCardProps extends IContainer {
   name: string;
   email: string;
   avatar: string;
   highlight?: string;
 }
 
-const UserCard: React.FC<IUserProps> = ({
+const UserCard: React.FC<IUserCardProps> = ({
   avatar,
   name,
   email,

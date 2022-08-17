@@ -6,7 +6,7 @@ export interface IContainer {
 }
 
 export const Container = styled.article<IContainer>`
-  width: fit-content;
+  width: 100%;
   display: flex;
   gap: 10px;
   border-radius: 10px;
@@ -31,6 +31,7 @@ export const AvatarWrapper = styled.div`
 `
 
 export const TextWrapper = styled.div`
+  width: 100%;
   padding: 10px 0;
 `
 

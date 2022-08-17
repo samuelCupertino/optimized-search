@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { UserCard, Search } from "../components/molecules";
+import { Search } from "../components/molecules";
+import { ListOfUserCard } from "../components/organisms";
 
 const Home: NextPage = () => {
   return (
@@ -12,12 +13,22 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <Search />
-        <UserCard
-          avatar="https://i.pravatar.cc/300"
-          name="Samuel Cupertino"
-          email="samuelcupertino@email.com"
-          highlight="samuel"
+        <Search value={"ola"} onChange={() => {}} />
+        <ListOfUserCard
+          data={[
+            {
+              id: 1,
+              avatar: "https://i.pravatar.cc/300",
+              name: "João",
+              email: "joao@email.com",
+            },
+            {
+              id: 2,
+              avatar: "https://i.pravatar.cc/300",
+              name: "João",
+              email: "joao@email.com",
+            },
+          ]}
         />
       </main>
     </>
