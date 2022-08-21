@@ -3,4 +3,4 @@ import dark from "./dark";
 
 export { light, dark };
 
-export default dark;
+export default light;

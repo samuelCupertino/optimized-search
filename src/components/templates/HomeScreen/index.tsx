@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
 import { Loading, Text } from "../../atoms";
 import { Search } from "../../molecules";
+import { IUserCardProps } from "../../molecules/UserCard";
 import { ListOfUserCard } from "../../organisms";
 import { Container } from "./styles";
 
-interface IHomeScreenProps {
-  // data: string[];
-}
-
-const HomeScreen: React.FC<IHomeScreenProps> = ({}) => {
+const HomeScreen: React.FC = () => {
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [users, setUsers] = useState<IUserCardProps[]>([]);
 
   useEffect(() => {
     setIsLoading(true);
+    setIsError(false);
+
     const timeoutId = setTimeout(async () => {
       try {
         const response = await fetch(`api/users?name=${search}`);
@@ -37,10 +36,10 @@ const HomeScreen: React.FC<IHomeScreenProps> = ({}) => {
       {isLoading ? (
         <Loading margin="40px auto" />
       ) : (
-        <ListOfUserCard data={users} highlight={search} />
+        <ListOfUserCard users={users} highlight={search} />
       )}
       {isError && (
-        <Text type="title" padding="10px">
+        <Text type="primary" padding="10px">
           Erro ao buscar usuários! Tente novamente mais tarde.
         </Text>
       )}

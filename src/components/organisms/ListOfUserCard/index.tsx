@@ -3,19 +3,19 @@ import { Container, IContainer, List, Item } from "./styles";
 
 interface IListOfUserCardProps extends IContainer {
   highlight?: string;
-  data: (IUserCardProps & { id: string })[];
+  users: IUserCardProps[];
 }
 
 const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
-  data,
+  users,
   highlight,
   ...props
 }) => (
   <Container {...props}>
     <List>
-      {data.map(({ id, ...userProps }) => (
-        <Item key={id}>
-          <UserCard {...userProps} highlight={highlight} />
+      {users.map((user) => (
+        <Item key={user.email}>
+          <UserCard {...user} highlight={highlight} />
         </Item>
       ))}
     </List>

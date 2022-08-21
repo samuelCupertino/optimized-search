@@ -10,7 +10,7 @@ export const Container = styled.div<IContainer>`
   display: flex;
   border-radius: 50px;
   overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.colors.bgPrimary};
+  border: 1px solid ${({ theme })=> theme.colors.bgPrimary};
   margin: ${({ margin })=> margin};
   padding: ${({ padding })=> padding};
 `

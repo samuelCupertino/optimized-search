@@ -1,9 +1,6 @@
 import { TextComponent, ITextComponent, TextHighlight } from "./styles";
-import { LabelHTMLAttributes } from "react";
 
-interface ITextProps
-  extends ITextComponent,
-    LabelHTMLAttributes<HTMLLabelElement> {
+interface ITextProps extends ITextComponent {
   as?: React.ElementType;
   children: React.ReactNode;
   highlight?: string;

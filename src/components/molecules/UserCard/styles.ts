@@ -11,12 +11,12 @@ export const Container = styled.article<IContainer>`
   gap: 10px;
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.colors.bgPrimary};
-  background: ${({ theme }) => theme.colors.bgSecondary};
+  border: 1px solid ${({ theme })=> theme.colors.bgPrimary};
+  background: ${({ theme })=> theme.colors.bgSecondary};
   margin: ${({ margin })=> margin};
   padding: ${({ padding })=> padding};
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+  @media (max-width: ${({ theme })=> theme.breakpoints.xs}) {
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -31,7 +31,7 @@ export const AvatarWrapper = styled.div`
     content: "";
     position: absolute;
     inset: 0;
-    background: ${({ theme }) => theme.colors.bgPrimary};
+    background: ${({ theme })=> theme.colors.bgPrimary};
     clip-path: polygon(0 0, 25% 0, 100% 100%, 0 100%);
   }
 `

@@ -16,29 +16,25 @@ const UserCard: React.FC<IUserCardProps> = ({
   email,
   highlight,
   ...props
-}) => {
-  const theme = useContext(ThemeContext);
-
-  return (
-    <Container {...props}>
-      <AvatarWrapper>
-        <Image
-          src={avatar}
-          alt={`foto de ${name}`}
-          border={`3px solid ${theme.colors.bgPrimary}`}
-          borderRadius="50%"
-        />
-      </AvatarWrapper>
-      <TextWrapper>
-        <Text as="h2" type="title" padding="10px" highlight={highlight}>
-          {name}
-        </Text>
-        <Text as="p" padding="10px" wordBreak="break-word">
-          {email}
-        </Text>
-      </TextWrapper>
-    </Container>
-  );
-};
+}) => (
+  <Container {...props}>
+    <AvatarWrapper>
+      <Image
+        src={avatar}
+        alt={`foto de ${name}`}
+        border="3px solid"
+        borderRadius="50%"
+      />
+    </AvatarWrapper>
+    <TextWrapper>
+      <Text as="h2" type="primary" padding="10px" highlight={highlight}>
+        {name}
+      </Text>
+      <Text as="p" padding="10px" wordBreak="break-word">
+        {email}
+      </Text>
+    </TextWrapper>
+  </Container>
+);
 
 export default UserCard;

@@ -1,33 +1,33 @@
-import styled, { css } from 'styled-components'
+import styled, { css, DefaultTheme } from 'styled-components'
 
 export interface ITextComponent {
-  type?: "title"
+  type?: 'primary'
+  wordBreak?: 'break-all' | 'break-word'
+  fontSize?: keyof DefaultTheme['sizes']
+  color?: keyof DefaultTheme['colors']
+  bgColor?: keyof DefaultTheme['colors']
   margin?: string
   padding?: string
-  color?: string
-  bgColor?: string
-  fontSize?: string
-  wordBreak?: 'break-all' | 'break-word'
 }
 
 export const TextComponent = styled.p<ITextComponent>`
-  font-size: ${({ theme, fontSize }) => fontSize || theme.sizes.small };
+  word-break: ${({ wordBreak })=> wordBreak};
+  font-size: ${({ theme, fontSize='small' })=> theme.sizes[fontSize] };
+  color: ${({ theme, color='textSecondary' })=> theme.colors[color]};
+  background: ${({ theme, bgColor })=> bgColor && theme.colors[bgColor]};
   margin: ${({ margin })=> margin};
   padding: ${({ padding })=> padding};
-  color: ${({ theme, color }) => color || theme.colors.textSecondary};
-  background: ${({ bgColor }) => bgColor};
-  word-break: ${({ wordBreak }) => wordBreak};
 
-  ${({ type })=> type === 'title' && css`
-    font-size: ${({ theme }) => theme.sizes.medium};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.bgPrimary};
-    color: ${({ theme }) => theme.colors.textPrimary};
+  ${({ type })=> type === 'primary' && css<ITextComponent>`
+    font-size: ${({ theme, fontSize='medium' })=> theme.sizes[fontSize] };
+    border-bottom: 1px solid ${({ theme })=> theme.colors.bgPrimary};
+    color: ${({ theme })=> theme.colors.textPrimary};
   `}
 `
 
 export const TextHighlight = styled.span`
-  background: ${({ theme }) => theme.colors.bgPrimary};
-  border-radius: 2px;
+  background: ${({ theme })=> theme.colors.bgPrimary};
+  border-radius: 3px;
 `
 
 
