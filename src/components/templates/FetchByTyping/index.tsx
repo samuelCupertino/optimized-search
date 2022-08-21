@@ -5,7 +5,7 @@ import { IUserCardProps } from "../../molecules/UserCard";
 import { ListOfUserCard } from "../../organisms";
 import { Container } from "./styles";
 
-const HomeScreen: React.FC = () => {
+const FetchByTyping: React.FC = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -47,4 +47,4 @@ const HomeScreen: React.FC = () => {
   );
 };
 
-export default HomeScreen;
+export default FetchByTyping;

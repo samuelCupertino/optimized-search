@@ -1,3 +1,3 @@
-import HomeScreen from "./HomeScreen";
+import FetchByTyping from "./FetchByTyping";
 
-export { HomeScreen };
+export { FetchByTyping };
