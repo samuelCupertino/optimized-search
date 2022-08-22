@@ -3,8 +3,11 @@ import type { AppProps } from "next/app";
 import { GlobalStyles } from "../styles/GlobalStyles";
 import { ThemeProvider } from "styled-components";
 import { dark, light } from "../styles/theme";
+import { QueryClient, QueryClientProvider } from "react-query";
 
-function MyApp({ Component, pageProps }: AppProps) {
+const queryClient = new QueryClient();
+
+const MyApp = ({ Component, pageProps }: AppProps) => {
   const [theme, setTheme] = useState(dark);
 
   useEffect(() => {
@@ -17,11 +20,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </QueryClientProvider>
   );
-}
+};
 
 export default MyApp;
