@@ -1,4 +1,4 @@
-import { Text, Input } from "../../atoms";
+import { Text, Input } from "@/src/components/atoms";
 import { Container, IContainer } from "./styles";
 
 interface ISearchProps extends IContainer {

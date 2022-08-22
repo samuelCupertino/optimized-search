@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import { Loading, Text } from "../../atoms";
-import { Search } from "../../molecules";
-import { ListOfUserCard } from "../../organisms";
+import { Loading, Text } from "@/src/components/atoms";
+import { Search } from "@/src/components/molecules";
+import { ListOfUserCard } from "@/src/components/organisms";
 import { Container } from "./styles";
 import { useQuery } from "react-query";
 
+interface IFetchUsersProps {
+  name?: string;
+  email?: string;
+}
 interface IFetchUsersProps {
   name?: string;
   email?: string;

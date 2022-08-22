@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import type { AppProps } from "next/app";
-import { GlobalStyles } from "../styles/GlobalStyles";
+import { GlobalStyles } from "@/src/styles/GlobalStyles";
 import { ThemeProvider } from "styled-components";
-import { dark, light } from "../styles/theme";
+import { dark, light } from "@/src/styles/theme";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
