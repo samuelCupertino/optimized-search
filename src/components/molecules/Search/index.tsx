@@ -1,9 +1,9 @@
-import { Text, Input } from "../../atoms";
-import { Container, IContainer } from "./styles";
+import { Text, Input } from '../../atoms'
+import { Container, IContainer } from './styles'
 
 interface ISearchProps extends IContainer {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const Search: React.FC<ISearchProps> = ({ value, onChange, ...props }) => (
@@ -18,6 +18,6 @@ const Search: React.FC<ISearchProps> = ({ value, onChange, ...props }) => (
     </Text>
     <Input bgColor="bgSecondary" {...{ value, onChange }} />
   </Container>
-);
+)
 
-export default Search;
+export default Search

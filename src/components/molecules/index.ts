@@ -1,4 +1,4 @@
-import Search from "./Search";
-import UserCard from "./UserCard";
+import Search from './Search'
+import UserCard from './UserCard'
 
-export { Search, UserCard };
+export { Search, UserCard }

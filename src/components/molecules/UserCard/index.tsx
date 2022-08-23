@@ -1,13 +1,11 @@
-import { useContext } from "react";
-import { ThemeContext } from "styled-components";
-import { Image, Text } from "../../atoms";
-import { Container, IContainer, AvatarWrapper, TextWrapper } from "./styles";
+import { Image, Text } from '../../atoms'
+import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
 export interface IUserCardProps extends IContainer {
-  name: string;
-  email: string;
-  avatar: string;
-  highlight?: string;
+  name: string
+  email: string
+  avatar: string
+  highlight?: string
 }
 
 const UserCard: React.FC<IUserCardProps> = ({
@@ -35,6 +33,6 @@ const UserCard: React.FC<IUserCardProps> = ({
       </Text>
     </TextWrapper>
   </Container>
-);
+)
 
-export default UserCard;
+export default UserCard

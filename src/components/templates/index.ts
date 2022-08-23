@@ -1,3 +1,3 @@
-import FetchByTyping from "./FetchByTyping";
+import FetchByTyping from './FetchByTyping'
 
-export { FetchByTyping };
+export { FetchByTyping }

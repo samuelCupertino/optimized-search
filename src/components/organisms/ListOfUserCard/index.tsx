@@ -1,9 +1,9 @@
-import UserCard, { IUserCardProps } from "../../molecules/UserCard";
-import { Container, IContainer, List, Item } from "./styles";
+import UserCard, { IUserCardProps } from '../../molecules/UserCard'
+import { Container, IContainer, List, Item } from './styles'
 
 interface IListOfUserCardProps extends IContainer {
-  highlight?: string;
-  users: IUserCardProps[];
+  highlight?: string
+  users: IUserCardProps[]
 }
 
 const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
@@ -20,6 +20,6 @@ const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
       ))}
     </List>
   </Container>
-);
+)
 
-export default ListOfUserCard;
+export default ListOfUserCard

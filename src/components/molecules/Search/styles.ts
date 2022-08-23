@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
 export interface IContainer {
-  margin?: string;
-  padding?: string;
+  margin?: string
+  padding?: string
 }
 
 export const Container = styled.div<IContainer>`
@@ -10,7 +10,7 @@ export const Container = styled.div<IContainer>`
   display: flex;
   border-radius: 50px;
   overflow: hidden;
-  border: 1px solid ${({ theme })=> theme.colors.bgPrimary};
-  margin: ${({ margin })=> margin};
-  padding: ${({ padding })=> padding};
+  border: 1px solid ${({ theme }) => theme.colors.bgPrimary};
+  margin: ${({ margin }) => margin};
+  padding: ${({ padding }) => padding};
 `

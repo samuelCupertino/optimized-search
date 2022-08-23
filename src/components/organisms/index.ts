@@ -1,3 +1,3 @@
-import ListOfUserCard from "./ListOfUserCard";
+import ListOfUserCard from './ListOfUserCard'
 
-export { ListOfUserCard };
+export { ListOfUserCard }

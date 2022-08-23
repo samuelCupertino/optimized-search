@@ -1,54 +1,51 @@
-import { useEffect, useState } from "react";
-import { Loading, Text } from "../../atoms";
-import { Search } from "../../molecules";
-import { ListOfUserCard } from "../../organisms";
-import { Container } from "./styles";
-import { useQuery } from "react-query";
+import { useEffect, useState } from 'react'
+import { Loading, Text } from '../../atoms'
+import { Search } from '../../molecules'
+import { ListOfUserCard } from '../../organisms'
+import { Container } from './styles'
+import { useQuery } from 'react-query'
 
 interface IFetchUsersProps {
-  name?: string;
-  email?: string;
+  name?: string
+  email?: string
 }
 const fetchUsers = async (where: IFetchUsersProps) => {
   const params = new URLSearchParams({
-    name: where.name ?? "",
-    email: where.email ?? "",
-  });
-  const response = await fetch(`api/users?${params}`);
-  const data = await response.json();
+    name: where.name ?? '',
+    email: where.email ?? '',
+  })
+  const response = await fetch(`api/users?${params}`)
+  const data = await response.json()
 
-  if (!response.ok) throw new Error(response.statusText);
+  if (!response.ok) throw new Error(response.statusText)
 
-  return data;
-};
+  return data
+}
 
 interface IUseDebounceData<T> {
-  value: T;
-  isWaiting: boolean;
+  value: T
+  isWaiting: boolean
 }
-const useDebounce = <T,>(
-  value: T,
-  delay: number = 500
-): IUseDebounceData<T> => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+const useDebounce = <T,>(value: T, delay = 500): IUseDebounceData<T> => {
+  const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timeoutId);
-  }, [value, delay]);
+    const timeoutId = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(timeoutId)
+  }, [value, delay])
 
-  return { value: debouncedValue, isWaiting: debouncedValue !== value };
-};
+  return { value: debouncedValue, isWaiting: debouncedValue !== value }
+}
 
 const FetchByTyping: React.FC = () => {
-  const [search, setSearch] = useState("");
-  const { isWaiting: isTyping } = useDebounce(search);
+  const [search, setSearch] = useState('')
+  const { isWaiting: isTyping } = useDebounce(search)
 
   const { data, isLoading, isSuccess, isError } = useQuery(
-    ["users", { name: search }],
+    ['users', { name: search }],
     () => fetchUsers({ name: search }),
     { staleTime: 60 * 1000, enabled: !isTyping }
-  );
+  )
 
   return (
     <Container>
@@ -68,7 +65,7 @@ const FetchByTyping: React.FC = () => {
         </Text>
       )}
     </Container>
-  );
-};
+  )
+}
 
-export default FetchByTyping;
+export default FetchByTyping

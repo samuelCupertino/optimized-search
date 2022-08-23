@@ -1,6 +1,6 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { FetchByTyping } from "../components/templates";
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import { FetchByTyping } from '../components/templates'
 
 const Home: NextPage = () => (
   <>
@@ -11,6 +11,6 @@ const Home: NextPage = () => (
     </Head>
     <FetchByTyping />
   </>
-);
+)
 
-export default Home;
+export default Home

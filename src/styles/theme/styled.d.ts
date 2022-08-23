@@ -10,7 +10,7 @@ declare module 'styled-components' {
       medium: string
       big: string
       giant: string
-    },
+    }
 
     breakpoints: {
       xs: string
@@ -18,7 +18,7 @@ declare module 'styled-components' {
       md: string
       lg: string
       xl: string
-    },
+    }
 
     colors: {
       textPrimary: string
