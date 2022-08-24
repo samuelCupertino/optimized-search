@@ -13,25 +13,25 @@ const FetchByTyping: React.FC = () => {
   const { isWaiting: isTyping } = useDebounce(search)
   const { fetchUsers } = useUsers()
 
-  const { data, isLoading, isSuccess, isError } = useQuery(
+  const { data, isStale, isSuccess, isError } = useQuery(
     ['users', { name: search }],
     () => fetchUsers({ name: search }),
-    { staleTime: 60 * 1000, enabled: !isTyping }
+    { staleTime: 3 * 60 * 1000, enabled: !isTyping }
   )
 
   return (
     <Container>
       <Search value={search} onChange={(e) => setSearch(e.target.value)} />
-      {isLoading && <Loading margin="40px auto" />}
-      {isSuccess &&
-        (data.length ? (
-          <ListOfUserCard users={data} highlight={search} />
-        ) : (
-          <Text type="primary" padding="10px">
-            Nenhum usuário com esse nome foi encontrado.
-          </Text>
-        ))}
-      {isError && (
+      {isStale && <Loading margin="40px auto" />}
+      {!isStale && isSuccess && data.length && (
+        <ListOfUserCard users={data} highlight={search} />
+      )}
+      {!isStale && isSuccess && data.length === 0 && (
+        <Text type="primary" padding="10px">
+          Nenhum usuário com esse nome foi encontrado.
+        </Text>
+      )}
+      {!isStale && isError && (
         <Text type="primary" padding="10px">
           Erro ao buscar usuários! Tente novamente mais tarde.
         </Text>
