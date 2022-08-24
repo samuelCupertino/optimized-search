@@ -3,9 +3,9 @@ import { useQuery } from 'react-query'
 import { useDebounce } from '@/src/hooks'
 import { useUsers } from '@/src/services/hooks'
 
-import { Loading, Text } from '../../atoms'
-import { Search } from '../../molecules'
-import { ListOfUserCard } from '../../organisms'
+import { Loading, Text } from '@/src/components/atoms'
+import { Search } from '@/src/components/molecules'
+import { ListOfUserCard } from '@/src/components/organisms'
 import { Container } from './styles'
 
 const FetchByTyping: React.FC = () => {

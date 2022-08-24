@@ -1,4 +1,4 @@
-import UserCard, { IUserCardProps } from '../../molecules/UserCard'
+import UserCard, { IUserCardProps } from '@/src/components/molecules/UserCard'
 import { Container, IContainer, List, Item } from './styles'
 
 interface IListOfUserCardProps extends IContainer {

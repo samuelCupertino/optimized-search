@@ -1,4 +1,4 @@
-import { Image, Text } from '../../atoms'
+import { Image, Text } from '@/src/components/atoms'
 import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
 export interface IUserCardProps extends IContainer {
