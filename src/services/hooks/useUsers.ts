@@ -1,10 +1,12 @@
+import { IUser } from '@/src/lib/interfaces'
+
 interface IFetchUsersProps {
   name?: string
   email?: string
 }
 
 export const useUsers = () => {
-  const fetchUsers = async (where: IFetchUsersProps) => {
+  const fetchUsers = async (where: IFetchUsersProps): Promise<IUser[]> => {
     const params = new URLSearchParams({
       name: where.name ?? '',
       email: where.email ?? '',

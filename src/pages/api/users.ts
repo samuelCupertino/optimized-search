@@ -1,12 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { IUser } from '@/src/lib/interfaces'
 import USERS from '@/src/data/users.json'
-
-type IUser = {
-  id: string
-  avatar: string
-  name: string
-  email: string
-}
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,6 +28,7 @@ const getUsers = async (name: string): Promise<IUser[]> => {
 
     return filteredUsers
   }
+
   const sortUsersBySearchName = (users: IUser[], searchName: string) => {
     if (!searchName) return users
 

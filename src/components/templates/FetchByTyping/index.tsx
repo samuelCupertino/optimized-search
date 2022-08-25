@@ -16,22 +16,22 @@ const FetchByTyping: React.FC = () => {
   const { data, isStale, isSuccess, isError } = useQuery(
     ['users', { name: search }],
     () => fetchUsers({ name: search }),
-    { staleTime: 3 * 60 * 1000, enabled: !isTyping }
+    { staleTime: 2 * 60 * 1000, enabled: !isTyping }
   )
 
   return (
     <Container>
       <Search value={search} onChange={(e) => setSearch(e.target.value)} />
       {isStale && <Loading margin="40px auto" />}
-      {!isStale && isSuccess && data.length && (
+      {isSuccess && data.length && (
         <ListOfUserCard users={data} highlight={search} />
       )}
-      {!isStale && isSuccess && data.length === 0 && (
+      {isSuccess && data.length === 0 && (
         <Text type="primary" padding="10px">
           Nenhum usuário com esse nome foi encontrado.
         </Text>
       )}
-      {!isStale && isError && (
+      {isError && (
         <Text type="primary" padding="10px">
           Erro ao buscar usuários! Tente novamente mais tarde.
         </Text>
