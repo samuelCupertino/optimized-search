@@ -2,6 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { IUser } from '@/src/lib/interfaces'
 import USERS from '@/src/data/users.json'
 
+const delay = async (time = 1000) =>
+  new Promise((resolve) => setTimeout(resolve, time))
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -9,6 +12,7 @@ export default async function handler(
   if (req.method === 'GET') {
     const name = (req.query.name as string) ?? ''
     const users = await getUsers(name)
+    await delay(1500)
     return res.status(200).json(users)
   }
 
