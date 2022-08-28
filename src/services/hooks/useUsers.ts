@@ -6,11 +6,11 @@ interface IFetchUsersProps {
 }
 
 export const useUsers = () => {
-  const fetchUsers = async (where: IFetchUsersProps): Promise<IUser[]> => {
-    const params = new URLSearchParams({
-      name: where.name ?? '',
-      email: where.email ?? '',
-    })
+  const fetchUsers = async ({
+    name = '',
+    email = '',
+  }: IFetchUsersProps): Promise<IUser[]> => {
+    const params = new URLSearchParams({ name, email })
     const response = await fetch(`api/users?${params}`)
     const data = await response.json()
 
