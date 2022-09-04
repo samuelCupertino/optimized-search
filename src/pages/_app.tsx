@@ -1,23 +1,14 @@
-import { useState, useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import type { AppProps } from 'next/app'
+
 import { GlobalStyles } from '@/src/styles/GlobalStyles'
 import { ThemeProvider } from 'styled-components'
-import { dark, light } from '@/src/styles/theme'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { useTheme } from '@/src/hooks/useTheme'
 
 const queryClient = new QueryClient()
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-  const [theme, setTheme] = useState(dark)
-
-  useEffect(() => {
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    setTheme(isDark ? dark : light)
-
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', (e) => setTheme(e.matches ? dark : light))
-  }, [])
+  const { theme } = useTheme()
 
   return (
     <QueryClientProvider client={queryClient}>
