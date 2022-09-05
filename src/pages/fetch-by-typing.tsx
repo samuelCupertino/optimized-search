@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { FetchByTyping } from '../components/templates'
 
-const Home: NextPage = () => (
+const FetchByTypingPage: NextPage = () => (
   <>
     <Head>
       <title>Busca otimizada de usuários</title>
@@ -13,4 +13,4 @@ const Home: NextPage = () => (
   </>
 )
 
-export default Home
+export default FetchByTypingPage

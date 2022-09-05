@@ -9,9 +9,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log('call api users')
   if (req.method === 'GET') {
-    const name = (req.query.name as string) ?? ''
-    const users = await getUsers(name)
+    const name = String(req.query.name)
+    const length = Number(req.query.length)
+
+    const users = await getUsers({ name, length })
     await delay(1500)
     return res.status(200).json(users)
   }
@@ -19,7 +22,15 @@ export default async function handler(
   res.status(405).json({ message: 'Method not allowed' })
 }
 
-const getUsers = async (name: string): Promise<IUser[]> => {
+interface IGetUsersProps {
+  name?: string
+  email?: string
+  length?: number
+}
+const getUsers = async ({
+  name = '',
+  length = 10,
+}: IGetUsersProps): Promise<IUser[]> => {
   const searchName = name.toLowerCase()
   const results = USERS
 
@@ -49,5 +60,5 @@ const getUsers = async (name: string): Promise<IUser[]> => {
   const filteredUsers = filterUsersBySearchName(results, searchName)
   const orderedUsers = sortUsersBySearchName(filteredUsers, searchName)
 
-  return orderedUsers
+  return orderedUsers.slice(0, length)
 }

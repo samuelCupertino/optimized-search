@@ -1,5 +1,6 @@
-import { QueryClient, QueryClientProvider } from 'react-query'
 import type { AppProps } from 'next/app'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { GlobalStyles } from '@/src/styles/GlobalStyles'
 import { ThemeProvider } from 'styled-components'
@@ -16,6 +17,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         <GlobalStyles />
         <Component {...pageProps} />
       </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
   )
 }

@@ -47,7 +47,7 @@
     "jsx-a11y"
   ],
   "rules": {
-    // "no-console": "error",
+    "no-console": "error",
     "react/jsx-filename-extension": [
       1,
       {
