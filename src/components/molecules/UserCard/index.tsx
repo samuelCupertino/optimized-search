@@ -1,4 +1,4 @@
-import { Image, Text } from '@/src/components/atoms'
+import { Image, Text, Hr } from '@/src/components/atoms'
 import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
 export interface IUserCardProps extends IContainer {
@@ -25,10 +25,17 @@ const UserCard: React.FC<IUserCardProps> = ({
       />
     </AvatarWrapper>
     <TextWrapper>
-      <Text as="h2" type="primary" padding="10px" highlight={highlight}>
+      <Text
+        as="h2"
+        fontSize="medium"
+        padding="10px"
+        margin="0 10px 0 0"
+        highlight={highlight}
+      >
         {name}
       </Text>
-      <Text as="p" padding="10px" wordBreak="break-word">
+      <Hr />
+      <Text as="p" padding="10px" margin="0 10px 0 0" wordBreak="break-word">
         {email}
       </Text>
     </TextWrapper>

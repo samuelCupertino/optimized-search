@@ -7,12 +7,13 @@ export interface IInputComponent {
 }
 
 export const InputComponent = styled.input<IInputComponent>`
-  width: 100%;
+  width: -webkit-fill-available;
   font-size: ${({ theme }) => theme.sizes.small};
   margin: ${({ margin }) => margin};
-  padding: ${({ padding = '0 10px' }) => padding};
+  padding: ${({ padding = '10px' }) => padding};
   color: ${({ theme }) => theme.colors.textSecondary};
-  background: ${({ theme, bgColor }) => bgColor && theme.colors[bgColor]};
-  outline: none;
+  background: ${({ theme, bgColor = 'bgTertiary' }) => theme.colors[bgColor]};
+  border-radius: 6px;
   border: none;
+  outline: none;
 `

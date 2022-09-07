@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { OptimisticUI } from '../components/templates'
+import { OptimisticUI } from '@/src/components/templates'
 
 const OptimisticUIPage: NextPage = () => (
   <>

@@ -6,7 +6,7 @@ export interface IContainerProps {
 
 const animRotate = keyframes`
   to {
-    transform: rotate(360deg);
+    rotate: 360deg;
   }
 `
 

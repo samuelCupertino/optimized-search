@@ -15,7 +15,7 @@ export default async function handler(
     const length = Number(req.query.length)
 
     const users = await getUsers({ name, length })
-    await delay(1500)
+    await delay(5000)
     return res.status(200).json(users)
   }
 

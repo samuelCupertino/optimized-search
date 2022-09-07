@@ -6,7 +6,7 @@ interface IListOfUserCardProps extends IContainer {
   users: IUserCardProps[]
 }
 
-const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
+export const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
   users,
   highlight,
   ...props

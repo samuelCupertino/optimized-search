@@ -1,32 +1,9 @@
-import { useQuery } from 'react-query'
-import { useUsers } from '@/src/services/hooks'
+import { Container } from './styles'
 
-import { Button, Loading, Text } from '@/src/components/atoms'
-import { ListOfUserCard } from '@/src/components/organisms'
-import { Container, HeaderWrapper } from './styles'
-
-const OptimisticUI: React.FC = () => {
-  const { fetchUsers } = useUsers()
-
-  const { data, isLoading, isSuccess } = useQuery(['users'], () =>
-    fetchUsers({ length: 2 })
-  )
-
+export const OptimisticUI: React.FC = () => {
   return (
     <Container>
-      {isLoading && <Loading margin="40px auto" />}
-      {isSuccess && data.length && (
-        <>
-          <HeaderWrapper>
-            <Text type="primary" padding="10px">
-              Lista de contatos:
-            </Text>
-            <Button type="secondary">+ Adicionar Contato</Button>
-          </HeaderWrapper>
-
-          <ListOfUserCard users={data} />
-        </>
-      )}
+      Caso de uso | otimista independente | otimista dependente
     </Container>
   )
 }

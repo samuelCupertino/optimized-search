@@ -4,6 +4,8 @@ interface ITextProps extends ITextComponent {
   as?: React.ElementType
   children: React.ReactNode
   highlight?: string
+  contentEditable?: boolean
+  onInput?: (event: React.FormEvent<HTMLInputElement>) => void
 }
 
 const formatHighlight = (children: React.ReactNode, highlight: string) => {

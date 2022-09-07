@@ -24,7 +24,11 @@ const FetchByTyping: React.FC = () => {
       <Search value={search} onChange={(e) => setSearch(e.target.value)} />
       {isStale && <Loading margin="40px auto" />}
       {isSuccess && data.length && (
-        <ListOfUserCard users={data} highlight={search} />
+        <ListOfUserCard
+          users={data}
+          highlight={search}
+          height="calc(100vh - 80px)"
+        />
       )}
       {isSuccess && data.length === 0 && (
         <Text type="primary" padding="10px">
