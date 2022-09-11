@@ -24,6 +24,7 @@ declare module 'styled-components' {
       textPrimary: string
       textSecondary: string
       textTertiary: string
+      textQuaternary: string
       bgPrimary: string
       bgSecondary: string
       bgTertiary: string

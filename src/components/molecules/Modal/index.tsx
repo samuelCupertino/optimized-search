@@ -26,7 +26,7 @@ const Modal: React.FC<IModalProps> = ({
     <ModalContent onClick={(e) => e.stopPropagation()}>
       {title && (
         <HeaderWrapper>
-          <Text color="textTertiary" fontSize="medium">
+          <Text color="textQuaternary" fontSize="medium">
             {title}
           </Text>
         </HeaderWrapper>

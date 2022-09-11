@@ -9,7 +9,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log('call api users')
   if (req.method === 'GET') {
     const name = String(req.query.name)
     const length = Number(req.query.length)
@@ -19,7 +18,23 @@ export default async function handler(
     return res.status(200).json(users)
   }
 
-  res.status(405).json({ message: 'Method not allowed' })
+  if (req.method === 'POST') {
+    const newUser = {
+      name: 'Samuel Cupertino',
+      email: 'samuelcupertino@email.com',
+      avatar: '',
+    }
+
+    return res.status(422).json({ email: ['email ja cadastrado'] })
+    try {
+      const users = await postUsers(newUser)
+      return res.status(200).json(users)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  res.status(405).json({ message: `Method ${req.method} not allowed` })
 }
 
 interface IGetUsersProps {
@@ -61,4 +76,10 @@ const getUsers = async ({
   const orderedUsers = sortUsersBySearchName(filteredUsers, searchName)
 
   return orderedUsers.slice(0, length)
+}
+
+const postUsers = async (newUser: IGetUsersProps): Promise<IUser[]> => {
+  throw new Error({
+    message: 'Posting users is not supported',
+  })
 }

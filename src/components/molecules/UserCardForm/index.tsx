@@ -1,25 +1,34 @@
-import { Image, Hr, Tooltip, Input } from '@/src/components/atoms'
+import { Image, Hr, Tooltip, Input, Text } from '@/src/components/atoms'
 import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
-export interface IFormUserCardProps extends IContainer {
+interface IUserCardFormErrorsProps extends IContainer {
+  name?: string
+  email?: string
+  avatar?: string
+}
+
+export interface IUserCardFormProps extends IContainer {
   name: string
   email: string
   avatar: string
+  errors?: IUserCardFormErrorsProps
   onChangeName: (value?: string) => void
   onChangeEmail: (value?: string) => void
   onChangeAvatar: (value?: string) => void
 }
 
-const FormUserCard: React.FC<IFormUserCardProps> = ({
+export const UserCardForm: React.FC<IUserCardFormProps> = ({
   avatar,
   name,
   email,
+  errors = {},
   onChangeName,
   onChangeEmail,
   onChangeAvatar,
-  ...props
+  margin,
+  padding,
 }) => (
-  <Container {...props}>
+  <Container margin={margin} padding={padding}>
     <AvatarWrapper>
       <Tooltip
         direction="right"
@@ -48,6 +57,17 @@ const FormUserCard: React.FC<IFormUserCardProps> = ({
         padding="10px"
         margin="0 10px 0"
       />
+      {errors.name && (
+        <Text
+          as="p"
+          fontSize="tiny"
+          color="textSecondary"
+          padding="5px 0"
+          margin="0 10px"
+        >
+          {errors.name}
+        </Text>
+      )}
       <Hr />
       <Input
         value={email}
@@ -56,8 +76,19 @@ const FormUserCard: React.FC<IFormUserCardProps> = ({
         padding="10px"
         margin="0 10px 0"
       />
+      {errors.email && (
+        <Text
+          as="p"
+          fontSize="tiny"
+          color="textSecondary"
+          padding="5px 0"
+          margin="0 10px"
+        >
+          {errors.email}
+        </Text>
+      )}
     </TextWrapper>
   </Container>
 )
 
-export default FormUserCard
+export default UserCardForm

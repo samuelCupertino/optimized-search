@@ -22,7 +22,8 @@ const dark: DefaultTheme = {
   colors: {
     textPrimary: '#eef0f6',
     textSecondary: '#d3d2e8',
-    textTertiary: '#000000',
+    textTertiary: '#9997ba',
+    textQuaternary: '#000000',
     bgPrimary: '#6e77fc',
     bgSecondary: '#1d1f33',
     bgTertiary: '#0c0e16',

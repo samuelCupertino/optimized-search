@@ -12,7 +12,7 @@ export interface IButtonComponent {
 export const ButtonComponent = styled.p<IButtonComponent>`
   font-size: ${({ theme, fontSize = 'small' }) => theme.sizes[fontSize]};
   font-weight: 500;
-  color: ${({ theme, color = 'textTertiary' }) => theme.colors[color]};
+  color: ${({ theme, color = 'textQuaternary' }) => theme.colors[color]};
   background: ${({ theme, bgColor = 'bgPrimary' }) =>
     bgColor && theme.colors[bgColor]};
   margin: ${({ margin }) => margin};

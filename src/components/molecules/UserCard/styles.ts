@@ -38,5 +38,8 @@ export const AvatarWrapper = styled.div`
 
 export const TextWrapper = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   padding: 10px 0;
 `

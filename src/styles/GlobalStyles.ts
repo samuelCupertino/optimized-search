@@ -5,6 +5,7 @@ export const GlobalStyles = createGlobalStyle`
     --textPrimary: ${({ theme }) => theme.colors.textPrimary};
     --textSecondary: ${({ theme }) => theme.colors.textSecondary};
     --textTertiary: ${({ theme }) => theme.colors.textTertiary};
+    --textQuaternary: ${({ theme }) => theme.colors.textQuaternary};
     --bgPrimary: ${({ theme }) => theme.colors.bgPrimary};
     --bgSecondary: ${({ theme }) => theme.colors.bgSecondary};
     --bgTertiary: ${({ theme }) => theme.colors.bgTertiary};
@@ -46,9 +47,9 @@ export const GlobalStyles = createGlobalStyle`
     inset: 0;
     background: linear-gradient(
       45deg,
-      ${({ theme }) => theme.colors.bgSecondary} 25%,
+      ${({ theme }) => theme.colors.textQuaternary} 25%,
       ${({ theme }) => theme.colors.bgPrimary} 50%,
-      ${({ theme }) => theme.colors.bgSecondary} 75%
+      ${({ theme }) => theme.colors.textQuaternary} 75%
     );
     background-size: 300%;
     pointer-events: none;

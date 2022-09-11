@@ -22,7 +22,8 @@ const light: DefaultTheme = {
   colors: {
     textPrimary: '#485783',
     textSecondary: '#52516e',
-    textTertiary: '#ffffff',
+    textTertiary: '#9997ba',
+    textQuaternary: '#ffffff',
     bgPrimary: '#6e77fc',
     bgSecondary: '#f8f9ff',
     bgTertiary: '#f0f1fe',

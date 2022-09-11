@@ -19,22 +19,22 @@ const defaultProps: IFetchUsersProps = {
 }
 
 export const useUsers = () => {
-  const storeUser = async ({
-    name,
-    email,
-    avatar,
-  }: IStoreUserProps): Promise<IUser> => {
-    const params = new URLSearchParams({ name, email, avatar })
-    const response = await fetch(`http://localhost:3000/api/users`)
+  const storeUser = async (newUser: IStoreUserProps): Promise<IUser> => {
+    const response = await fetch(`http://localhost:3000/api/users`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newUser),
+    })
     const data = await response.json()
 
-    throw new Error(response.statusText)
+    if (response.status === 200) return data
 
-    return { id: 'uuid', name, email, avatar }
-
-    if (!response.ok) throw new Error(response.statusText)
-
-    return data
+    if (response.status === 422) {
+      console.log(data)
+    }
   }
 
   const fetchUsers = async ({

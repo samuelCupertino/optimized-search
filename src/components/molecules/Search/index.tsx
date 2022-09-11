@@ -10,7 +10,7 @@ const Search: React.FC<ISearchProps> = ({ value, onChange, ...props }) => (
   <Container {...props}>
     <Text
       fontSize="medium"
-      color="textTertiary"
+      color="textQuaternary"
       bgColor="bgPrimary"
       padding="10px 20px"
     >

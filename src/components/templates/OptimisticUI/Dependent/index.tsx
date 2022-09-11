@@ -3,21 +3,20 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserProps } from '@/src/services/hooks'
 
 import { Button, Loading, Text } from '@/src/components/atoms'
-import { Modal, FormUserCard } from '@/src/components/molecules'
+import { Modal, UserCardForm } from '@/src/components/molecules'
 import { ListOfUserCard } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
-export const OptimisticUIIndependent: React.FC = () => {
+const INITIAL_USER: IStoreUserProps = { avatar: '', name: '', email: '' }
+
+export const OptimisticUIDependent: React.FC = () => {
   const queryClient = useQueryClient()
   const { storeUser, fetchUsers } = useUsers()
   const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [newUser, setNewUser] = useState<IStoreUserProps>({
-    avatar: '',
-    name: '',
-    email: '',
-  })
+  const [userCardFormData, setUserCardFormData] = useState(INITIAL_USER)
+  const [userCardFormErrors, setUserCardFormErrors] = useState(INITIAL_USER)
 
-  const { data, isSuccess, isLoading } = useQuery(
+  const { data, isSuccess, isLoading, isError } = useQuery(
     ['users'],
     () => fetchUsers({ length: 3 }),
     { refetchOnWindowFocus: false }
@@ -25,27 +24,55 @@ export const OptimisticUIIndependent: React.FC = () => {
 
   const storeMutation = useMutation(storeUser, {
     onMutate: async (newUser: IStoreUserProps) => {
-      setModalIsVisible(false)
       await queryClient.cancelQueries(['users'])
-      const previousUsers =
+      const oldUsers =
         queryClient.getQueryData<IStoreUserProps[]>(['users']) ?? []
 
-      const optimisticUser = { ...newUser, loading: ['name'] }
+      const uniqueString = new Date().getTime().toString(36)
+      const optimisticUser = {
+        ...newUser,
+        id: uniqueString.padEnd(45, uniqueString),
+        loading: ['id'],
+      }
 
-      queryClient.setQueryData(
-        ['users'],
-        (oldUsers: IStoreUserProps[] = []) => [optimisticUser, ...oldUsers]
-      )
+      queryClient.setQueryData(['users'], [optimisticUser, ...oldUsers])
 
-      return previousUsers
+      return oldUsers
     },
-    onError: (_err, _newUser, previousUsers) => {
-      queryClient.setQueryData(['users'], previousUsers)
+    onError: (_err, _newUser, oldUsers) => {
+      console.log({ _err, _newUser, oldUsers })
+      queryClient.setQueryData(['users'], oldUsers)
     },
     onSettled: () => {
       queryClient.invalidateQueries(['users'])
     },
   })
+
+  const modalAction = {
+    show() {
+      setModalIsVisible(true)
+    },
+    hide() {
+      setUserCardFormErrors(INITIAL_USER)
+      setUserCardFormData(INITIAL_USER)
+      setModalIsVisible(false)
+    },
+    save(newUser: IStoreUserProps) {
+      const isValide = newUser.name && newUser.email
+
+      if (!isValide) {
+        setUserCardFormErrors((oldErros) => ({
+          ...oldErros,
+          name: newUser.name ? '' : 'O campo nome é obrigatório.',
+          email: newUser.email ? '' : 'O campo email é obrigatório.',
+        }))
+        return
+      }
+
+      this.hide()
+      storeMutation.mutate(newUser)
+    },
+  }
 
   return (
     <Container>
@@ -53,41 +80,51 @@ export const OptimisticUIIndependent: React.FC = () => {
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
+        <Button type="secondary" onClick={modalAction.show}>
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
 
       {isLoading && <Loading margin="40px auto" />}
-
       {isSuccess && data.length && <ListOfUserCard users={data} />}
+      {isSuccess && data.length === 0 && (
+        <Text type="primary" padding="10px">
+          Nenhum usuário cadastrado.
+        </Text>
+      )}
+      {isError && (
+        <Text type="primary" padding="10px">
+          Erro ao buscar usuários! Tente novamente mais tarde.
+        </Text>
+      )}
 
       <Modal
         title="CRIAÇÃO DE USUÁRIO"
         isVisible={modalIsVisible}
-        onClickOutside={() => setModalIsVisible(false)}
+        onClickOutside={modalAction.hide}
         body={
-          <FormUserCard
-            {...newUser}
+          <UserCardForm
+            {...userCardFormData}
+            errors={userCardFormErrors}
             onChangeName={(name = '') => {
-              setNewUser((old) => ({ ...old, name }))
+              setUserCardFormData((oldData) => ({ ...oldData, name }))
             }}
             onChangeEmail={(email = '') => {
-              setNewUser((old) => ({ ...old, email }))
+              setUserCardFormData((oldData) => ({ ...oldData, email }))
             }}
             onChangeAvatar={(avatar = '') => {
-              setNewUser((old) => ({ ...old, avatar }))
+              setUserCardFormData((oldData) => ({ ...oldData, avatar }))
             }}
           />
         }
         footer={
           <>
-            <Button type="secondary" onClick={() => setModalIsVisible(false)}>
+            <Button type="secondary" onClick={modalAction.hide}>
               Cancelar
             </Button>
             <Button
               type="primary"
-              onClick={() => storeMutation.mutate(newUser)}
+              onClick={() => modalAction.save(userCardFormData)}
             >
               Salvar
             </Button>
@@ -98,4 +135,4 @@ export const OptimisticUIIndependent: React.FC = () => {
   )
 }
 
-export default OptimisticUIIndependent
+export default OptimisticUIDependent

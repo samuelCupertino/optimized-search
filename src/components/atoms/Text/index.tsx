@@ -5,6 +5,7 @@ interface ITextProps extends ITextComponent {
   children: React.ReactNode
   highlight?: string
   contentEditable?: boolean
+  loading?: boolean
   onInput?: (event: React.FormEvent<HTMLInputElement>) => void
 }
 
@@ -22,11 +23,16 @@ const formatHighlight = (children: React.ReactNode, highlight: string) => {
   return formattedText
 }
 
-const Text: React.FC<ITextProps> = ({ children, as, highlight, ...props }) => {
+const Text: React.FC<ITextProps> = ({
+  children,
+  highlight,
+  loading,
+  ...props
+}) => {
   const text = highlight ? formatHighlight(children, highlight) : children
 
   return (
-    <TextComponent as={as} {...props}>
+    <TextComponent {...props} className={loading && 'anim-loading'}>
       {text}
     </TextComponent>
   )
