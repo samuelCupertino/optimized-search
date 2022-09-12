@@ -27,6 +27,10 @@ const light: DefaultTheme = {
     bgPrimary: '#6e77fc',
     bgSecondary: '#f8f9ff',
     bgTertiary: '#f0f1fe',
+    danger: '#ff4444',
+    warning: '#ffbb33',
+    success: '#00C851',
+    info: '#33b5e5',
   },
 }
 

@@ -1,25 +1,14 @@
 import { IUser } from '@/src/lib/interfaces'
 
-export interface IFetchUsersProps {
-  name?: string
-  email?: string
-  length?: number
-}
-
-export interface IStoreUserProps {
-  name: string
-  email: string
-  avatar: string
-}
-
-const defaultProps: IFetchUsersProps = {
-  name: '',
-  email: '',
-  length: 10,
+export interface IStoreUserError {
+  status: number
+  data: { [key in keyof IUser]?: string[] }
 }
 
 export const useUsers = () => {
-  const storeUser = async (newUser: IStoreUserProps): Promise<IUser> => {
+  const storeUser = async (
+    newUser: Omit<IUser, 'id'>
+  ): Promise<IUser | IStoreUserError> => {
     const response = await fetch(`http://localhost:3000/api/users`, {
       method: 'POST',
       headers: {
@@ -30,19 +19,22 @@ export const useUsers = () => {
     })
     const data = await response.json()
 
-    if (response.status === 200) return data
-
-    if (response.status === 422) {
-      console.log(data)
+    if (!response.ok) {
+      const error: IStoreUserError = {
+        status: response.status,
+        data,
+      }
+      throw error
     }
+
+    return data
   }
 
   const fetchUsers = async ({
     name = '',
     email = '',
-    length = 10,
-  }: IFetchUsersProps = defaultProps): Promise<IUser[]> => {
-    const params = new URLSearchParams({ name, email, length: String(length) })
+  }: Pick<Partial<IUser>, 'name' | 'email'> = {}): Promise<IUser[]> => {
+    const params = new URLSearchParams({ name, email })
     const response = await fetch(`http://localhost:3000/api/users?${params}`)
     const data = await response.json()
 

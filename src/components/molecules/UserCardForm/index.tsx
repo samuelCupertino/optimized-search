@@ -1,17 +1,17 @@
 import { Image, Hr, Tooltip, Input, Text } from '@/src/components/atoms'
 import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
-interface IUserCardFormErrorsProps extends IContainer {
-  name?: string
-  email?: string
-  avatar?: string
+export interface IUserCardFormError extends IContainer {
+  name?: string[]
+  email?: string[]
+  avatar?: string[]
 }
 
 export interface IUserCardFormProps extends IContainer {
   name: string
   email: string
   avatar: string
-  errors?: IUserCardFormErrorsProps
+  errors?: IUserCardFormError
   onChangeName: (value?: string) => void
   onChangeEmail: (value?: string) => void
   onChangeAvatar: (value?: string) => void
@@ -61,7 +61,7 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
         <Text
           as="p"
           fontSize="tiny"
-          color="textSecondary"
+          color="danger"
           padding="5px 0"
           margin="0 10px"
         >
@@ -80,7 +80,7 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
         <Text
           as="p"
           fontSize="tiny"
-          color="textSecondary"
+          color="danger"
           padding="5px 0"
           margin="0 10px"
         >

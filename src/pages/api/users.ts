@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IUser } from '@/src/lib/interfaces'
-import USERS from '@/src/data/users.json'
 
 const delay = async (time = 1000) =>
   new Promise((resolve) => setTimeout(resolve, time))
@@ -11,53 +10,59 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     const name = String(req.query.name)
-    const length = Number(req.query.length)
+    const users = await getUsers({ name })
 
-    const users = await getUsers({ name, length })
-    await delay(5000)
+    await delay(2000)
     return res.status(200).json(users)
   }
 
   if (req.method === 'POST') {
-    const newUser = {
-      name: 'Samuel Cupertino',
-      email: 'samuelcupertino@email.com',
-      avatar: '',
+    const newUser: Pick<IUser, 'avatar' | 'name' | 'email'> = req.body
+    const userExists = await getUser({ email: newUser.email })
+
+    await delay(6000)
+    if (userExists) {
+      return res
+        .status(422)
+        .json({ email: ['Já existe um usuário com esse email.'] })
     }
 
-    return res.status(422).json({ email: ['email ja cadastrado'] })
-    try {
-      const users = await postUsers(newUser)
-      return res.status(200).json(users)
-    } catch (error) {
-      console.log(error)
-    }
+    const users = await postUsers(newUser)
+    return res.status(201).json(users)
   }
 
-  res.status(405).json({ message: `Method ${req.method} not allowed` })
+  res.status(405).json({ message: `Method ${req.method} not allowed.` })
 }
 
-interface IGetUsersProps {
-  name?: string
-  email?: string
-  length?: number
+const getUser = async ({
+  name,
+  email,
+}: Pick<Partial<IUser>, 'name' | 'email'>): Promise<IUser> => {
+  const params = new URLSearchParams({
+    ...(name ? { name } : {}),
+    ...(email ? { email } : {}),
+    _limit: '1',
+  }).toString()
+
+  const response = await fetch(`http://localhost:3000/users?${params}`)
+  const [results]: IUser[] = await response.json()
+
+  return results
 }
+
 const getUsers = async ({
   name = '',
-  length = 10,
-}: IGetUsersProps): Promise<IUser[]> => {
-  const searchName = name.toLowerCase()
-  const results = USERS
+  email,
+}: Pick<Partial<IUser>, 'name' | 'email'>): Promise<IUser[]> => {
+  const params = new URLSearchParams({
+    ...(name ? { name_like: name } : {}),
+    ...(email ? { email_like: email } : {}),
+    _sort: 'id',
+    _order: 'desc',
+  }).toString()
 
-  const filterUsersBySearchName = (users: IUser[], searchName: string) => {
-    if (!searchName) return users
-
-    const filteredUsers = users.filter((user: Record<string, any>) => {
-      return user.name.toLowerCase().includes(searchName)
-    })
-
-    return filteredUsers
-  }
+  const response = await fetch(`http://localhost:3000/users?${params}`)
+  const results: IUser[] = await response.json()
 
   const sortUsersBySearchName = (users: IUser[], searchName: string) => {
     if (!searchName) return users
@@ -72,14 +77,21 @@ const getUsers = async ({
     return orderedUsers
   }
 
-  const filteredUsers = filterUsersBySearchName(results, searchName)
-  const orderedUsers = sortUsersBySearchName(filteredUsers, searchName)
+  const searchName = name.toLowerCase()
+  const orderedUsers = sortUsersBySearchName(results, searchName)
 
-  return orderedUsers.slice(0, length)
+  return orderedUsers
 }
 
-const postUsers = async (newUser: IGetUsersProps): Promise<IUser[]> => {
-  throw new Error({
-    message: 'Posting users is not supported',
+const postUsers = async (newUser: Omit<IUser, 'id'>): Promise<IUser> => {
+  const response = await fetch(`http://localhost:3000/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newUser),
   })
+  const data = await response.json()
+
+  return data
 }

@@ -28,6 +28,10 @@ declare module 'styled-components' {
       bgPrimary: string
       bgSecondary: string
       bgTertiary: string
+      danger: string
+      warning: string
+      success: string
+      info: string
     }
   }
 }

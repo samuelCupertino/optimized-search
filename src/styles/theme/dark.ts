@@ -27,6 +27,10 @@ const dark: DefaultTheme = {
     bgPrimary: '#6e77fc',
     bgSecondary: '#1d1f33',
     bgTertiary: '#0c0e16',
+    danger: '#CC0000',
+    warning: '#FF8800',
+    success: '#007E33',
+    info: '#0099CC',
   },
 }
 

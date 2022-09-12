@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserProps } from '@/src/services/hooks'
 
 import { Button, Loading, Text } from '@/src/components/atoms'
-import { Modal, FormUserCard } from '@/src/components/molecules'
+import { Modal, UserCardForm } from '@/src/components/molecules'
 import { ListOfUserCard } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
@@ -19,7 +19,7 @@ export const OptimisticUIUseCase: React.FC = () => {
 
   const { data, isSuccess, isFetching } = useQuery(
     ['users'],
-    () => fetchUsers({ length: 3 }),
+    () => fetchUsers(),
     { refetchOnWindowFocus: false }
   )
 
@@ -53,7 +53,7 @@ export const OptimisticUIUseCase: React.FC = () => {
         isVisible={modalIsVisible}
         onClickOutside={() => setModalIsVisible(false)}
         body={
-          <FormUserCard
+          <UserCardForm
             {...newUser}
             onChangeName={(name = '') => {
               setNewUser((old) => ({ ...old, name }))

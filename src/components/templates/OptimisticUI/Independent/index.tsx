@@ -18,7 +18,7 @@ export const OptimisticUIDependent: React.FC = () => {
 
   const { data, isSuccess, isLoading, isError } = useQuery(
     ['users'],
-    () => fetchUsers({ length: 3 }),
+    () => fetchUsers(),
     { refetchOnWindowFocus: false }
   )
 

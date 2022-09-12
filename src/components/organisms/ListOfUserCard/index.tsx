@@ -16,7 +16,7 @@ export const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
   <Container {...props}>
     <List>
       {users.map((user) => (
-        <Item key={user.email}>
+        <Item key={user.id}>
           <UserCard {...user} hidden={hidden} highlight={highlight} />
         </Item>
       ))}
