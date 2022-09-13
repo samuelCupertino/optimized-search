@@ -1,6 +1,9 @@
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes, DefaultTheme } from 'styled-components'
 
 export interface IContainerProps {
+  size?: string
+  color?: keyof DefaultTheme['colors']
+  bgColor?: keyof DefaultTheme['colors']
   margin?: string
 }
 
@@ -12,15 +15,15 @@ const animRotate = keyframes`
 
 export const Container = styled.div<IContainerProps>`
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: ${({ size = '50px' }) => size};
+  height: ${({ size = '50px' }) => size};
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   background: conic-gradient(
-    ${({ theme }) => theme.colors.bgTertiary},
-    ${({ theme }) => theme.colors.bgPrimary}
+    ${({ theme, bgColor = 'bgTertiary' }) => theme.colors[bgColor]},
+    ${({ theme, color = 'bgPrimary' }) => theme.colors[color]}
   );
   margin: ${({ margin }) => margin};
   animation: ${animRotate} 1s linear infinite;
@@ -30,6 +33,6 @@ export const Container = styled.div<IContainerProps>`
     width: 75%;
     height: 75%;
     border-radius: 50%;
-    background: ${({ theme }) => theme.colors.bgTertiary};
+    background: ${({ theme, bgColor = 'bgTertiary' }) => theme.colors[bgColor]};
   }
 `

@@ -18,9 +18,23 @@ export default async function handler(
 
   if (req.method === 'POST') {
     const newUser: Pick<IUser, 'avatar' | 'name' | 'email'> = req.body
-    const userExists = await getUser({ email: newUser.email })
 
-    await delay(6000)
+    // if (!newUser.name || !newUser.email) {
+    return res.status(422).json({
+      ...(newUser.name
+        ? {
+            name: [
+              'O campo nome é obrigatório.',
+              'O campo nome é obrigatório.',
+              'O campo nome é obrigatório.',
+            ],
+          }
+        : {}),
+      ...(newUser.email ? { email: ['O campo email é obrigatório.'] } : {}),
+    })
+    // }
+
+    const userExists = await getUser({ email: newUser.email })
     if (userExists) {
       return res
         .status(422)
@@ -57,7 +71,7 @@ const getUsers = async ({
   const params = new URLSearchParams({
     ...(name ? { name_like: name } : {}),
     ...(email ? { email_like: email } : {}),
-    _sort: 'id',
+    _sort: 'createdAt',
     _order: 'desc',
   }).toString()
 
@@ -89,7 +103,10 @@ const postUsers = async (newUser: Omit<IUser, 'id'>): Promise<IUser> => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(newUser),
+    body: JSON.stringify({
+      ...newUser,
+      createdAt: new Date().toISOString(),
+    }),
   })
   const data = await response.json()
 

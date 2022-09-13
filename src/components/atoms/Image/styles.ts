@@ -7,6 +7,7 @@ export interface IContainer {
   borderRadius?: string
   margin?: string
   padding?: string
+  color?: keyof DefaultTheme['colors']
   bgColor?: keyof DefaultTheme['colors']
 }
 
@@ -14,7 +15,7 @@ export const Container = styled.div<IContainer>`
   width: ${({ width }) => width};
   height: ${({ height }) => height};
   border: ${({ border }) => border};
-  color: ${({ theme }) => theme.colors.bgPrimary};
+  color: ${({ theme, color = 'bgPrimary' }) => theme.colors[color]};
   background: ${({ theme, bgColor }) => bgColor && theme.colors[bgColor]};
   border-radius: ${({ borderRadius }) => borderRadius};
   margin: ${({ margin }) => margin};

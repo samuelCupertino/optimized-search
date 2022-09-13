@@ -9,6 +9,10 @@ export const GlobalStyles = createGlobalStyle`
     --bgPrimary: ${({ theme }) => theme.colors.bgPrimary};
     --bgSecondary: ${({ theme }) => theme.colors.bgSecondary};
     --bgTertiary: ${({ theme }) => theme.colors.bgTertiary};
+    --danger: ${({ theme }) => theme.colors.danger}
+    --warning: ${({ theme }) => theme.colors.warning}
+    --success: ${({ theme }) => theme.colors.success}
+    --info: ${({ theme }) => theme.colors.info}
   }
 
   html,
@@ -52,17 +56,17 @@ export const GlobalStyles = createGlobalStyle`
       ${({ theme }) => theme.colors.textQuaternary} 75%
     );
     background-size: 300%;
+    border-radius: 4px;
     pointer-events: none;
-    border-radius: 6px;
     z-index: 1;
-    animation: loadingEffect 3s infinite;
+    animation: animLoading 3s infinite;
   }
-  @keyframes loadingEffect {
+  @keyframes animLoading {
     from {
       background-position: 300% 0;
     }
     to {
-      background-position: 0% 0;
+      background-position: 0 0;
     }
   }
 `

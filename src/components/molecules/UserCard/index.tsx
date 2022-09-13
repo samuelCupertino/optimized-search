@@ -1,14 +1,20 @@
 import { Image, Text, Hr } from '@/src/components/atoms'
-import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
+import {
+  Container,
+  IContainer,
+  AvatarWrapper,
+  CurvatureDetail,
+  TextWrapper,
+} from './styles'
 
 export interface IUserCardProps extends IContainer {
-  id?: string
+  id: string
   name: string
-  email?: string
+  email: string
   avatar: string
   highlight?: string
   loading?: ('id' | 'avatar' | 'name' | 'email')[] | boolean
-  hidden?: ('id' | 'email')[]
+  onClick?: () => void
 }
 
 const UserCard: React.FC<IUserCardProps> = ({
@@ -18,7 +24,8 @@ const UserCard: React.FC<IUserCardProps> = ({
   email,
   highlight,
   loading = false,
-  hidden = [],
+  colorPrimary = 'bgPrimary',
+  onClick,
   ...props
 }) => {
   const loadingFields =
@@ -29,14 +36,16 @@ const UserCard: React.FC<IUserCardProps> = ({
       : []
 
   return (
-    <Container {...props}>
-      <AvatarWrapper>
+    <Container {...props} colorPrimary={colorPrimary} onClick={onClick}>
+      <AvatarWrapper colorPrimary={colorPrimary}>
+        <CurvatureDetail colorPrimary={colorPrimary} />
         <Image
-          src={avatar}
+          src={avatar || '/images/profile.png'}
           alt={`foto de ${name}`}
+          fallbackSrc="/images/profile.png"
           border="3px solid"
           borderRadius="50%"
-          bgColor="bgPrimary"
+          color={colorPrimary}
           loading={loadingFields.includes('avatar')}
         />
       </AvatarWrapper>
@@ -52,30 +61,26 @@ const UserCard: React.FC<IUserCardProps> = ({
         >
           {name}
         </Text>
-        <Hr />
-        {!hidden.includes('email') && (
-          <Text
-            as="p"
-            padding="5px"
-            margin="0 10px 0 0"
-            wordBreak="break-word"
-            loading={loadingFields.includes('email')}
-          >
-            {email}
-          </Text>
-        )}
-        {!hidden.includes('id') && (
-          <Text
-            as="p"
-            fontSize="tiny"
-            color="textSecondary"
-            padding="5px 0"
-            margin="4px 10px 0 auto"
-            loading={loadingFields.includes('id')}
-          >
-            ID: {id}
-          </Text>
-        )}
+        <Hr color={colorPrimary} />
+        <Text
+          as="p"
+          padding="5px"
+          margin="0 10px 0 0"
+          wordBreak="break-word"
+          loading={loadingFields.includes('email')}
+        >
+          {email}
+        </Text>
+        <Text
+          as="p"
+          fontSize="tiny"
+          color="textSecondary"
+          padding="5px 0"
+          margin="4px 10px 0 auto"
+          loading={loadingFields.includes('id')}
+        >
+          ID: {id}
+        </Text>
       </TextWrapper>
     </Container>
   )

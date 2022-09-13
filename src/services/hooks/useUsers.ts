@@ -2,6 +2,8 @@ import { IUser } from '@/src/lib/interfaces'
 
 export interface IStoreUserError {
   status: number
+  isClientError: boolean
+  isServerError: boolean
   data: { [key in keyof IUser]?: string[] }
 }
 
@@ -22,6 +24,8 @@ export const useUsers = () => {
     if (!response.ok) {
       const error: IStoreUserError = {
         status: response.status,
+        isClientError: response.status >= 400 && response.status <= 499,
+        isServerError: response.status >= 500 && response.status <= 599,
         data,
       }
       throw error

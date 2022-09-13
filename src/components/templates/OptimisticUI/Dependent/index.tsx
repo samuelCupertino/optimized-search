@@ -2,26 +2,28 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
-import { IUser } from '@/src/lib/interfaces'
-import { IUserCardFormError } from '@/src/components/molecules/UserCardForm'
+import { IUserCardProps } from '@/src/components/molecules/UserCard'
+import { IUserCardFormProps } from '@/src/components/molecules/UserCardForm'
+import { IMessage } from '@/src/components/organisms/ListOfMessage'
 
 import { Button, Loading, Text } from '@/src/components/atoms'
 import { Modal, UserCardForm } from '@/src/components/molecules'
-import { ListOfUserCard } from '@/src/components/organisms'
+import { ListOfMessage, ListOfUserCard } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
-type IUserFormData = Omit<IUser, 'id'>
-type IUserFormError = IUserCardFormError
+type IUserFormData = Pick<IUserCardFormProps, 'name' | 'email' | 'avatar'>
+type IUserFormError = IUserCardFormProps['errors']
 
 const FORM_DATA: IUserFormData = { avatar: '', name: '', email: '' }
 const FORM_ERROR: IUserFormError = { avatar: [], name: [], email: [] }
 
 export const OptimisticUIDependent: React.FC = () => {
   const queryClient = useQueryClient()
-  const { storeUser, fetchUsers } = useUsers()
   const [modalIsVisible, setModalIsVisible] = useState(false)
   const [userCardFormData, setUserCardFormData] = useState(FORM_DATA)
   const [userCardFormError, setUserCardFormError] = useState(FORM_ERROR)
+  const [errorMessages, setErrorMessages] = useState<IMessage[]>([])
+  const { fetchUsers, storeUser } = useUsers()
 
   const { data, isSuccess, isLoading, isError } = useQuery(
     ['users'],
@@ -30,14 +32,15 @@ export const OptimisticUIDependent: React.FC = () => {
   )
 
   const storeMutation = useMutation(storeUser, {
-    onMutate: async (newUser: IUserFormData) => {
+    onMutate: async (userFormData) => {
       await queryClient.cancelQueries(['users'])
-      const oldUsers = queryClient.getQueryData<IUser[]>(['users']) ?? []
+      const oldUsers =
+        queryClient.getQueryData<IUserCardProps[]>(['users']) ?? []
 
-      const lastId = oldUsers[0]?.id ?? 0
-      const optimisticUser: IUser = {
-        ...newUser,
-        id: lastId + 1,
+      const uniqueString = new Date().getTime().toString(36)
+      const optimisticUser: IUserCardProps = {
+        ...userFormData,
+        id: uniqueString.padEnd(10, uniqueString),
         loading: ['id'],
       }
 
@@ -45,18 +48,47 @@ export const OptimisticUIDependent: React.FC = () => {
 
       return oldUsers
     },
-    onError: (error: IStoreUserError, newUser, oldUsers) => {
-      if (error.status === 422) {
-        modalAction.show({ data: newUser, errors: error.data })
-      }
+    onError: (error: IStoreUserError, userFormData, oldUsers) => {
       queryClient.setQueryData(['users'], oldUsers)
+
+      if (error.status === 422) {
+        setErrorMessages((oldMessages) => [
+          ...oldMessages,
+          {
+            id: oldMessages.length,
+            type: 'warning',
+            title: 'Informações invalidas!',
+            text: `As informações do usuário '${userFormData.name}' são invalidas. Clique aqui para editar.`,
+            onClick: () => {
+              modalAction.show({ data: userFormData, errors: error.data })
+              setErrorMessages(oldMessages)
+            },
+            onClose: () => setErrorMessages(oldMessages),
+          },
+        ])
+        return
+      }
+
+      setErrorMessages((oldMessages) => [
+        ...oldMessages,
+        {
+          id: oldMessages.length,
+          type: 'danger',
+          title: 'Oops... Erro inesperado!',
+          text: `Ocorreu um erro ao salvar o usuário '${userFormData.name}'. Clique aqui para tentar novamente.`,
+          onClick: () => {
+            modalAction.show({ data: userFormData, errors: error.data })
+            setErrorMessages(oldMessages)
+          },
+          onClose: () => setErrorMessages(oldMessages),
+        },
+      ])
     },
     onSettled: () => {
       queryClient.invalidateQueries(['users'])
     },
     retry: (failureCount, error: IStoreUserError) => {
-      if (error.status < 500) return false
-      return failureCount < 3
+      return error.isServerError ? failureCount < 3 : false
     },
   })
 
@@ -67,19 +99,24 @@ export const OptimisticUIDependent: React.FC = () => {
       setModalIsVisible(true)
     },
     hide: () => setModalIsVisible(false),
-    save: (newUser: IUserFormData) => {
-      setUserCardFormError({
-        name: newUser.name ? [] : ['O campo nome é obrigatório.'],
-        email: newUser.email ? [] : ['O campo email é obrigatório.'],
-      })
+    save: (userFormData: IUserFormData) => {
+      const isValide = userFormData.name && userFormData.email
 
-      storeMutation.mutate(newUser)
+      if (!isValide) {
+        return setUserCardFormError({
+          name: userFormData.name ? [] : ['O campo nome é obrigatório.'],
+          email: userFormData.email ? [] : ['O campo email é obrigatório.'],
+        })
+      }
+
+      storeMutation.mutate(userFormData)
       setModalIsVisible(false)
     },
   }
 
   return (
     <Container>
+      {!!errorMessages.length && <ListOfMessage messages={errorMessages} />}
       <HeaderWrapper>
         <Text type="primary" padding="10px">
           Lista de contatos:
@@ -109,7 +146,6 @@ export const OptimisticUIDependent: React.FC = () => {
         body={
           <UserCardForm
             {...userCardFormData}
-            errors={userCardFormError}
             onChangeName={(name = '') => {
               setUserCardFormData((oldData) => ({ ...oldData, name }))
             }}
@@ -118,6 +154,13 @@ export const OptimisticUIDependent: React.FC = () => {
             }}
             onChangeAvatar={(avatar = '') => {
               setUserCardFormData((oldData) => ({ ...oldData, avatar }))
+            }}
+            errors={userCardFormError}
+            onFocusName={() => {
+              setUserCardFormError((oldError) => ({ ...oldError, name: [] }))
+            }}
+            onFocusEmail={() => {
+              setUserCardFormError((oldError) => ({ ...oldError, email: [] }))
             }}
           />
         }

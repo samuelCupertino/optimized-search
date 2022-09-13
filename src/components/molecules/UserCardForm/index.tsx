@@ -1,7 +1,7 @@
 import { Image, Hr, Tooltip, Input, Text } from '@/src/components/atoms'
 import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
-export interface IUserCardFormError extends IContainer {
+interface IUserCardFormError extends IContainer {
   name?: string[]
   email?: string[]
   avatar?: string[]
@@ -15,6 +15,9 @@ export interface IUserCardFormProps extends IContainer {
   onChangeName: (value?: string) => void
   onChangeEmail: (value?: string) => void
   onChangeAvatar: (value?: string) => void
+  onFocusName?: () => void
+  onFocusEmail?: () => void
+  onFocusAvatar?: () => void
 }
 
 export const UserCardForm: React.FC<IUserCardFormProps> = ({
@@ -25,6 +28,9 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
   onChangeName,
   onChangeEmail,
   onChangeAvatar,
+  onFocusName,
+  onFocusEmail,
+  onFocusAvatar,
   margin,
   padding,
 }) => (
@@ -34,8 +40,9 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
         direction="right"
         target={
           <Image
-            src={avatar}
+            src={avatar || '/images/profile.png'}
             alt={`foto do usuário ${name}`}
+            fallbackSrc="/images/profile.png"
             border="3px solid"
             borderRadius="50%"
           />
@@ -44,6 +51,7 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
           <Input
             value={avatar}
             onChange={(e) => onChangeAvatar(e.target.value)}
+            onFocus={onFocusAvatar}
             placeholder="URL do avatar"
           />
         }
@@ -53,40 +61,42 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
       <Input
         value={name}
         onChange={(e) => onChangeName(e.target.value)}
+        onFocus={onFocusName}
         placeholder="Nome"
         padding="10px"
         margin="0 10px 0"
       />
-      {errors.name && (
+      {errors.name?.map((error) => (
         <Text
+          key={error}
           as="p"
           fontSize="tiny"
           color="danger"
-          padding="5px 0"
-          margin="0 10px"
+          margin="5px 10px"
         >
-          {errors.name}
+          {error}
         </Text>
-      )}
+      ))}
       <Hr />
       <Input
         value={email}
         onChange={(e) => onChangeEmail(e.target.value)}
+        onFocus={onFocusEmail}
         placeholder="Email"
         padding="10px"
         margin="0 10px 0"
       />
-      {errors.email && (
+      {errors.email?.map((error) => (
         <Text
+          key={error}
           as="p"
           fontSize="tiny"
           color="danger"
-          padding="5px 0"
-          margin="0 10px"
+          margin="5px 10px"
         >
-          {errors.email}
+          {error}
         </Text>
-      )}
+      ))}
     </TextWrapper>
   </Container>
 )

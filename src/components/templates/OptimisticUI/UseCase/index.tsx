@@ -73,9 +73,21 @@ export const OptimisticUIUseCase: React.FC = () => {
             </Button>
             <Button
               type="primary"
-              onClick={() => storeMutation.mutate(newUser)}
+              cursor={storeMutation.isLoading ? 'wait' : 'pointer'}
+              onClick={() =>
+                !storeMutation.isLoading && storeMutation.mutate(newUser)
+              }
             >
-              {storeMutation.isLoading ? 'Salvando...' : 'Salvar'}
+              {storeMutation.isLoading ? (
+                <Loading
+                  size="18px"
+                  color="bgSecondary"
+                  bgColor="bgPrimary"
+                  margin="0 11.5px"
+                />
+              ) : (
+                'Salvar'
+              )}
             </Button>
           </>
         }

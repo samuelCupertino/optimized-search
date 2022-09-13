@@ -10,4 +10,5 @@ export const HrComponent = styled.hr<IHrComponent>`
   background: ${({ theme, color = 'bgPrimary' }) => theme.colors[color]};
   border: none;
   padding: ${({ padding = '0.5px' }) => padding};
+  margin: ${({ margin }) => margin};
 `

@@ -26,21 +26,13 @@ const Image: React.FC<ImageProps> = ({
       height={height}
       className={loading ? 'anim-loading' : ''}
     >
-      {/* <NextImage
+      <NextImage
         src={imageSrc}
         alt={alt}
         width={width}
         height={height}
-        unoptimized="true"
+        unoptimized={true}
         loader={() => imageSrc}
-        onError={() => setImageSrc(fallbackSrc)}
-      /> */}
-      <img
-        src={imageSrc}
-        alt={alt}
-        width={width}
-        height={height}
-        unoptimized="true"
         onError={() => setImageSrc(fallbackSrc)}
       />
     </Container>

@@ -5,6 +5,7 @@ export interface IButtonComponent {
   fontSize?: keyof DefaultTheme['sizes']
   color?: keyof DefaultTheme['colors']
   bgColor?: keyof DefaultTheme['colors']
+  cursor?: 'default' | 'pointer' | 'copy' | 'not-allowed' | 'wait'
   margin?: string
   padding?: string
 }
@@ -18,7 +19,7 @@ export const ButtonComponent = styled.p<IButtonComponent>`
   margin: ${({ margin }) => margin};
   padding: ${({ padding = '10px 20px' }) => padding};
   border-radius: 4px;
-  cursor: pointer;
+  cursor: ${({ cursor = 'pointer' }) => cursor};
   transition: background 0.5s, color 0.5s;
 
   ${({ type }) =>

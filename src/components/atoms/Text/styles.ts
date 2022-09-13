@@ -4,15 +4,17 @@ export interface ITextComponent {
   type?: 'primary'
   wordBreak?: 'break-all' | 'break-word'
   fontSize?: keyof DefaultTheme['sizes']
+  lineHeight?: string
   color?: keyof DefaultTheme['colors']
   bgColor?: keyof DefaultTheme['colors']
   margin?: string
   padding?: string
 }
 
-export const TextComponent = styled.p<ITextComponent>`
+export const TextComponent = styled.span<ITextComponent>`
   word-break: ${({ wordBreak }) => wordBreak};
   font-size: ${({ theme, fontSize = 'small' }) => theme.sizes[fontSize]};
+  line-height: ${({ lineHeight }) => lineHeight};
   color: ${({ theme, color = 'textSecondary' }) => theme.colors[color]};
   background: ${({ theme, bgColor }) => bgColor && theme.colors[bgColor]};
   margin: ${({ margin }) => margin};

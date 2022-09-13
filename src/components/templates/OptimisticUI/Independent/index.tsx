@@ -53,8 +53,8 @@ export const OptimisticUIDependent: React.FC = () => {
       const isValide = newUser.name && newUser.email
 
       if (!isValide) {
-        setUserCardFormErrors((oldErros) => ({
-          ...oldErros,
+        setUserCardFormErrors((oldErrors) => ({
+          ...oldErrors,
           name: newUser.name ? '' : 'O campo nome é obrigatório.',
           email: newUser.email ? '' : 'O campo email é obrigatório.',
         }))
