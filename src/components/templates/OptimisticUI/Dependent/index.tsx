@@ -52,7 +52,7 @@ export const OptimisticUIDependent: React.FC = () => {
       queryClient.setQueryData(['users'], oldUsers)
 
       if (error.status === 422) {
-        setErrorMessages((oldMessages) => [
+        return setErrorMessages((oldMessages) => [
           ...oldMessages,
           {
             id: oldMessages.length,
@@ -66,7 +66,6 @@ export const OptimisticUIDependent: React.FC = () => {
             onClose: () => setErrorMessages(oldMessages),
           },
         ])
-        return
       }
 
       setErrorMessages((oldMessages) => [
@@ -105,7 +104,7 @@ export const OptimisticUIDependent: React.FC = () => {
       if (!isValide) {
         return setUserCardFormError({
           name: userFormData.name ? [] : ['O campo nome é obrigatório.'],
-          email: userFormData.email ? [] : ['O campo email é obrigatório.'],
+          email: userFormData.email ? [] : ['O campo e-mail é obrigatório.'],
         })
       }
 

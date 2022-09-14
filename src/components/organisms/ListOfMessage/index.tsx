@@ -1,4 +1,4 @@
-import Message, { IMessageProps } from '@/src/components/molecules/Message'
+import { Message, IMessageProps } from '@/src/components/molecules/Message'
 import { Container, IContainer, List, Item } from './styles'
 
 export interface IMessage extends IMessageProps {

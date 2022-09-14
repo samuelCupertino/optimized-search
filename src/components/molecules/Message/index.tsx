@@ -17,7 +17,7 @@ export const Message: React.FC<IMessageProps> = ({
   onClose,
   ...props
 }) => {
-  const handlerClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
     onClose?.()
   }
@@ -30,7 +30,7 @@ export const Message: React.FC<IMessageProps> = ({
       onClick={onClick}
     >
       {onClose && (
-        <ButtonClose colorPrimary={type} onClick={handlerClose}>
+        <ButtonClose colorPrimary={type} onClick={handleClose}>
           x
         </ButtonClose>
       )}

@@ -12,6 +12,7 @@ export interface IUserCardProps extends IContainer {
   name: string
   email: string
   avatar: string
+  showId?: boolean
   highlight?: string
   loading?: ('id' | 'avatar' | 'name' | 'email')[] | boolean
   onClick?: () => void
@@ -22,6 +23,7 @@ export const UserCard: React.FC<IUserCardProps> = ({
   avatar,
   name,
   email,
+  showId = true,
   highlight,
   loading = false,
   colorPrimary = 'bgPrimary',
@@ -63,7 +65,6 @@ export const UserCard: React.FC<IUserCardProps> = ({
         </Text>
         <Hr color={colorPrimary} />
         <Text
-          as="p"
           padding="5px"
           margin="0 10px 0 0"
           wordBreak="break-word"
@@ -71,16 +72,17 @@ export const UserCard: React.FC<IUserCardProps> = ({
         >
           {email}
         </Text>
-        <Text
-          as="p"
-          fontSize="tiny"
-          color="textSecondary"
-          padding="5px 0"
-          margin="4px 10px 0 auto"
-          loading={loadingFields.includes('id')}
-        >
-          ID: {id}
-        </Text>
+        {showId && (
+          <Text
+            fontSize="tiny"
+            color="textSecondary"
+            padding="5px 0"
+            margin="4px 10px 0 auto"
+            loading={loadingFields.includes('id')}
+          >
+            ID: {id}
+          </Text>
+        )}
       </TextWrapper>
     </Container>
   )

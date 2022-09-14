@@ -19,20 +19,13 @@ export default async function handler(
   if (req.method === 'POST') {
     const newUser: Pick<IUser, 'avatar' | 'name' | 'email'> = req.body
 
-    // if (!newUser.name || !newUser.email) {
-    return res.status(422).json({
-      ...(newUser.name
-        ? {
-            name: [
-              'O campo nome é obrigatório.',
-              'O campo nome é obrigatório.',
-              'O campo nome é obrigatório.',
-            ],
-          }
-        : {}),
-      ...(newUser.email ? { email: ['O campo email é obrigatório.'] } : {}),
-    })
-    // }
+    await delay(3000)
+    if (!newUser.name || !newUser.email) {
+      return res.status(422).json({
+        ...(newUser.name ? { name: ['O campo name é obrigatório.'] } : {}),
+        ...(newUser.email ? { email: ['O campo e-mail é obrigatório.'] } : {}),
+      })
+    }
 
     const userExists = await getUser({ email: newUser.email })
     if (userExists) {

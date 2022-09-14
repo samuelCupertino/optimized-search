@@ -1,20 +1,27 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { useUsers, IStoreUserProps } from '@/src/services/hooks'
+import { useUsers, IStoreUserError } from '@/src/services/hooks'
+
+import { IUserCardProps } from '@/src/components/molecules/UserCard'
+import { IUserCardFormProps } from '@/src/components/molecules/UserCardForm'
 
 import { Button, Loading, Text } from '@/src/components/atoms'
 import { Modal, UserCardForm } from '@/src/components/molecules'
 import { ListOfUserCard } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
-const INITIAL_USER: IStoreUserProps = { avatar: '', name: '', email: '' }
+type IUserFormData = Pick<IUserCardFormProps, 'name' | 'email' | 'avatar'>
+type IUserFormError = IUserCardFormProps['errors']
 
-export const OptimisticUIDependent: React.FC = () => {
+const FORM_DATA: IUserFormData = { avatar: '', name: '', email: '' }
+const FORM_ERROR: IUserFormError = { avatar: [], name: [], email: [] }
+
+export const OptimisticUIIndependent: React.FC = () => {
   const queryClient = useQueryClient()
-  const { storeUser, fetchUsers } = useUsers()
   const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [userCardFormData, setUserCardFormData] = useState(INITIAL_USER)
-  const [userCardFormErrors, setUserCardFormErrors] = useState(INITIAL_USER)
+  const [userCardFormData, setUserCardFormData] = useState(FORM_DATA)
+  const [userCardFormError, setUserCardFormError] = useState(FORM_ERROR)
+  const { fetchUsers, storeUser } = useUsers()
 
   const { data, isSuccess, isLoading, isError } = useQuery(
     ['users'],
@@ -23,46 +30,48 @@ export const OptimisticUIDependent: React.FC = () => {
   )
 
   const storeMutation = useMutation(storeUser, {
-    onMutate: async (newUser: IStoreUserProps) => {
+    onMutate: async (userFormData) => {
       await queryClient.cancelQueries(['users'])
       const oldUsers =
-        queryClient.getQueryData<IStoreUserProps[]>(['users']) ?? []
+        queryClient.getQueryData<IUserCardProps[]>(['users']) ?? []
 
-      queryClient.setQueryData(['users'], [newUser, ...oldUsers])
+      const uniqueString = new Date().getTime().toString(36)
+      const optimisticUser: IUserCardProps = {
+        ...userFormData,
+        id: uniqueString.padEnd(10, uniqueString),
+      }
+
+      queryClient.setQueryData(['users'], [optimisticUser, ...oldUsers])
 
       return oldUsers
     },
-    onError: (_err, _newUser, oldUsers) => {
+    onError: (_error: IStoreUserError, _userFormData, oldUsers) => {
       queryClient.setQueryData(['users'], oldUsers)
     },
-    onSettled: () => {
-      queryClient.invalidateQueries(['users'])
+    retry: (failureCount, error: IStoreUserError) => {
+      return error.isServerError ? failureCount < 3 : false
     },
   })
 
   const modalAction = {
-    show() {
+    show: (user?: { data?: IUserFormData; errors?: IUserFormError }) => {
+      setUserCardFormData(user?.data ?? FORM_DATA)
+      setUserCardFormError(user?.errors ?? FORM_ERROR)
       setModalIsVisible(true)
     },
-    hide() {
-      setUserCardFormErrors(INITIAL_USER)
-      setUserCardFormData(INITIAL_USER)
-      setModalIsVisible(false)
-    },
-    save(newUser: IStoreUserProps) {
-      const isValide = newUser.name && newUser.email
+    hide: () => setModalIsVisible(false),
+    save: (userFormData: IUserFormData) => {
+      const isValide = userFormData.name && userFormData.email
 
       if (!isValide) {
-        setUserCardFormErrors((oldErrors) => ({
-          ...oldErrors,
-          name: newUser.name ? '' : 'O campo nome é obrigatório.',
-          email: newUser.email ? '' : 'O campo email é obrigatório.',
-        }))
-        return
+        return setUserCardFormError({
+          name: userFormData.name ? [] : ['O campo nome é obrigatório.'],
+          email: userFormData.email ? [] : ['O campo e-mail é obrigatório.'],
+        })
       }
 
-      this.hide()
-      storeMutation.mutate(newUser)
+      storeMutation.mutate(userFormData)
+      setModalIsVisible(false)
     },
   }
 
@@ -78,7 +87,9 @@ export const OptimisticUIDependent: React.FC = () => {
       </HeaderWrapper>
 
       {isLoading && <Loading margin="40px auto" />}
-      {isSuccess && data.length && <ListOfUserCard users={data} />}
+      {isSuccess && data.length && (
+        <ListOfUserCard users={data} showId={false} />
+      )}
       {isSuccess && data.length === 0 && (
         <Text type="primary" padding="10px">
           Nenhum usuário cadastrado.
@@ -97,7 +108,6 @@ export const OptimisticUIDependent: React.FC = () => {
         body={
           <UserCardForm
             {...userCardFormData}
-            errors={userCardFormErrors}
             onChangeName={(name = '') => {
               setUserCardFormData((oldData) => ({ ...oldData, name }))
             }}
@@ -106,6 +116,13 @@ export const OptimisticUIDependent: React.FC = () => {
             }}
             onChangeAvatar={(avatar = '') => {
               setUserCardFormData((oldData) => ({ ...oldData, avatar }))
+            }}
+            errors={userCardFormError}
+            onFocusName={() => {
+              setUserCardFormError((oldError) => ({ ...oldError, name: [] }))
+            }}
+            onFocusEmail={() => {
+              setUserCardFormError((oldError) => ({ ...oldError, email: [] }))
             }}
           />
         }

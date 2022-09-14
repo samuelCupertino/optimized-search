@@ -2,12 +2,14 @@ import { UserCard, IUserCardProps } from '@/src/components/molecules/UserCard'
 import { Container, IContainer, List, Item } from './styles'
 
 interface IListOfUserCardProps extends IContainer {
-  highlight?: string
   users: IUserCardProps[]
+  showId?: boolean
+  highlight?: string
 }
 
 export const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
   users,
+  showId,
   highlight,
   ...props
 }) => (
@@ -15,7 +17,7 @@ export const ListOfUserCard: React.FC<IListOfUserCardProps> = ({
     <List>
       {users.map((user) => (
         <Item key={user.id}>
-          <UserCard {...user} highlight={highlight} />
+          <UserCard {...user} highlight={highlight} showId={showId} />
         </Item>
       ))}
     </List>
