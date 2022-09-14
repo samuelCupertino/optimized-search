@@ -6,7 +6,11 @@ interface ISearchProps extends IContainer {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const Search: React.FC<ISearchProps> = ({ value, onChange, ...props }) => (
+export const Search: React.FC<ISearchProps> = ({
+  value,
+  onChange,
+  ...props
+}) => (
   <Container {...props}>
     <Text
       fontSize="medium"
@@ -19,5 +23,3 @@ const Search: React.FC<ISearchProps> = ({ value, onChange, ...props }) => (
     <Input bgColor="bgSecondary" {...{ value, onChange }} />
   </Container>
 )
-
-export default Search

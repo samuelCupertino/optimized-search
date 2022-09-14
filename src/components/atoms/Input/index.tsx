@@ -5,6 +5,6 @@ interface IInputProps
   extends IInputComponent,
     InputHTMLAttributes<HTMLInputElement> {}
 
-const Input: React.FC<IInputProps> = (props) => <InputComponent {...props} />
-
-export default Input
+export const Input: React.FC<IInputProps> = (props) => (
+  <InputComponent {...props} />
+)

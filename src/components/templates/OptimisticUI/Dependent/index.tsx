@@ -181,5 +181,3 @@ export const OptimisticUIDependent: React.FC = () => {
     </Container>
   )
 }
-
-export default OptimisticUIDependent

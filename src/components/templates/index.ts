@@ -1,4 +1,2 @@
-import FetchByTyping from './FetchByTyping'
-import OptimisticUI from './OptimisticUI'
-
-export { FetchByTyping, OptimisticUI }
+export * from './FetchByTyping'
+export * from './OptimisticUI'

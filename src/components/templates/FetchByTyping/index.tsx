@@ -8,7 +8,7 @@ import { Search } from '@/src/components/molecules'
 import { ListOfUserCard } from '@/src/components/organisms'
 import { Container } from './styles'
 
-const FetchByTyping: React.FC = () => {
+export const FetchByTyping: React.FC = () => {
   const [search, setSearch] = useState('')
   const { isWaiting: isTyping } = useDebounce(search)
   const { fetchUsers } = useUsers()
@@ -43,5 +43,3 @@ const FetchByTyping: React.FC = () => {
     </Container>
   )
 }
-
-export default FetchByTyping

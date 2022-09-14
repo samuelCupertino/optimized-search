@@ -7,5 +7,3 @@ export const OptimisticUI: React.FC = () => {
     </Container>
   )
 }
-
-export default OptimisticUI

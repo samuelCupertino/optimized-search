@@ -94,5 +94,3 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
     </TextWrapper>
   </Container>
 )
-
-export default UserCardForm

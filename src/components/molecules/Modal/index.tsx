@@ -15,7 +15,7 @@ interface IModalProps extends IContainer {
   onClickOutside?: () => void
 }
 
-const Modal: React.FC<IModalProps> = ({
+export const Modal: React.FC<IModalProps> = ({
   title,
   body,
   footer,
@@ -36,5 +36,3 @@ const Modal: React.FC<IModalProps> = ({
     </ModalContent>
   </Container>
 )
-
-export default Modal

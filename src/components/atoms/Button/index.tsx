@@ -5,12 +5,14 @@ interface IButtonProps extends IButtonComponent {
   onClick?: () => void
 }
 
-const Button: React.FC<IButtonProps> = ({ children, onClick, ...props }) => {
+export const Button: React.FC<IButtonProps> = ({
+  children,
+  onClick,
+  ...props
+}) => {
   return (
     <ButtonComponent onClick={onClick} {...props}>
       {children}
     </ButtonComponent>
   )
 }
-
-export default Button

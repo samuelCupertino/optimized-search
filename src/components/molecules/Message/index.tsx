@@ -9,7 +9,7 @@ export interface IMessageProps extends IContainer {
   onClose?: () => void
 }
 
-const Message: React.FC<IMessageProps> = ({
+export const Message: React.FC<IMessageProps> = ({
   type = 'info',
   title,
   text,
@@ -44,5 +44,3 @@ const Message: React.FC<IMessageProps> = ({
     </Container>
   )
 }
-
-export default Message

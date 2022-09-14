@@ -12,7 +12,7 @@ interface ITooltip extends IContainer, ITooltipWrapper {
   target: React.ReactNode
 }
 
-const Tooltip: React.FC<ITooltip> = ({
+export const Tooltip: React.FC<ITooltip> = ({
   target,
   content,
   direction,
@@ -35,5 +35,3 @@ const Tooltip: React.FC<ITooltip> = ({
     </Container>
   )
 }
-
-export default Tooltip

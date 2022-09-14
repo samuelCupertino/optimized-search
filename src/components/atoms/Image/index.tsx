@@ -9,7 +9,7 @@ interface ImageProps extends IContainer {
   loading?: boolean
 }
 
-const Image: React.FC<ImageProps> = ({
+export const Image: React.FC<ImageProps> = ({
   src,
   alt,
   fallbackSrc = '/images/image-fallback.jpeg',
@@ -38,5 +38,3 @@ const Image: React.FC<ImageProps> = ({
     </Container>
   )
 }
-
-export default Image

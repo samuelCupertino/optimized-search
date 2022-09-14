@@ -17,7 +17,7 @@ export interface IUserCardProps extends IContainer {
   onClick?: () => void
 }
 
-const UserCard: React.FC<IUserCardProps> = ({
+export const UserCard: React.FC<IUserCardProps> = ({
   id,
   avatar,
   name,
@@ -85,5 +85,3 @@ const UserCard: React.FC<IUserCardProps> = ({
     </Container>
   )
 }
-
-export default UserCard

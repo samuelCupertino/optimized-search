@@ -23,7 +23,7 @@ const formatHighlight = (children: React.ReactNode, highlight: string) => {
   return formattedText
 }
 
-const Text: React.FC<ITextProps> = ({
+export const Text: React.FC<ITextProps> = ({
   children,
   highlight,
   loading,
@@ -37,5 +37,3 @@ const Text: React.FC<ITextProps> = ({
     </TextComponent>
   )
 }
-
-export default Text
