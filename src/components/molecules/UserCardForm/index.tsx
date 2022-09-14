@@ -1,4 +1,4 @@
-import { Image, Hr, Tooltip, Input, Text } from '@/src/components/atoms'
+import { Image, Hr, Tooltip, Input, List } from '@/src/components/atoms'
 import { Container, IContainer, AvatarWrapper, TextWrapper } from './styles'
 
 interface IUserCardFormError extends IContainer {
@@ -66,17 +66,14 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
         padding="10px"
         margin="0 10px 0"
       />
-      {errors.name?.map((error) => (
-        <Text
-          key={error}
-          as="p"
-          fontSize="tiny"
+      {errors.name && (
+        <List
+          items={errors.name}
           color="danger"
-          margin="5px 10px"
-        >
-          {error}
-        </Text>
-      ))}
+          fontSize="tiny"
+          margin="0 15px"
+        />
+      )}
       <Hr />
       <Input
         value={email}
@@ -86,17 +83,14 @@ export const UserCardForm: React.FC<IUserCardFormProps> = ({
         padding="10px"
         margin="0 10px 0"
       />
-      {errors.email?.map((error) => (
-        <Text
-          key={error}
-          as="p"
-          fontSize="tiny"
+      {errors.email && (
+        <List
+          items={errors.email}
           color="danger"
-          margin="5px 10px"
-        >
-          {error}
-        </Text>
-      ))}
+          fontSize="tiny"
+          margin="0 15px"
+        />
+      )}
     </TextWrapper>
   </Container>
 )

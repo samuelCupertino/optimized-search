@@ -5,5 +5,6 @@ import Button from './Button'
 import Loading from './Loading'
 import Hr from './Hr'
 import Tooltip from './Tooltip'
+export * from './List'
 
 export { Image, Input, Text, Button, Loading, Hr, Tooltip }
