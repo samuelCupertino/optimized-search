@@ -1,48 +1,20 @@
-import { useState, useReducer } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
-import { IUserCardProps } from '@/src/components/molecules/UserCard'
-import { IUserCardFormProps } from '@/src/components/molecules/UserCardForm'
-
 import { Button, Loading, Text } from '@/src/components/atoms'
-import { Modal, UserCardForm } from '@/src/components/molecules'
-import { ListOfUserCard } from '@/src/components/organisms'
+import { IUserCardProps } from '@/src/components/molecules'
+import {
+  ListOfUserCard,
+  UserFormModal,
+  IUserFormModalErrors,
+} from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
-
-interface IUserForm {
-  data: Pick<IUserCardFormProps, 'name' | 'email' | 'avatar'>
-  errors: IUserCardFormProps['errors']
-}
-
-const FORM_USER: IUserForm = {
-  data: { avatar: '', name: '', email: '' },
-  errors: { avatar: [], name: [], email: [] },
-}
-
-interface IUserFormAction {
-  type: 'UPDATE'
-  payload: IUserForm | Pick<IUserForm, 'data'> | Pick<IUserForm, 'errors'>
-}
-
-const userFormReducer = (state: IUserForm, action: IUserFormAction) => {
-  switch (action.type) {
-    case 'UPDATE':
-      return {
-        ...state,
-        ...action.payload,
-      }
-    default:
-      return state
-  }
-}
 
 export const OptimisticUIUseCase: React.FC = () => {
   const queryClient = useQueryClient()
   const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [userCardFormState, userCardFormDispatch] = useReducer<
-    (state: IUserForm, action: IUserFormAction) => IUserForm
-  >(userFormReducer, FORM_USER)
+  const [userFormErrors, setUserFormErrors] = useState<IUserFormModalErrors>({})
   const { storeUser, fetchUsers } = useUsers()
 
   const { data, isSuccess, isFetching, isError } = useQuery(
@@ -54,69 +26,28 @@ export const OptimisticUIUseCase: React.FC = () => {
   const storeMutation = useMutation(storeUser, {
     onMutate: async () => {
       await queryClient.cancelQueries(['users'])
-      const oldUsers =
-        queryClient.getQueryData<IUserCardProps[]>(['users']) ?? []
+      const oldUsers = queryClient.getQueryData<IUserCardProps[]>(['users'])
 
       return oldUsers
     },
     onSuccess: () => {
       setModalIsVisible(false)
-      queryClient.invalidateQueries(['users'])
+      setUserFormErrors({})
     },
-    onError: (error: IStoreUserError, _userFormData, oldUsers) => {
+    onError: (error: IStoreUserError, _userCardForm, oldUsers) => {
       if (error.status === 422) {
-        userCardFormDispatch({
-          type: 'UPDATE',
-          payload: { errors: { ...userCardFormState.errors, ...error.data } },
-        })
+        setUserFormErrors(error.data)
       }
 
       queryClient.setQueryData(['users'], oldUsers)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['users'])
     },
     retry: (failureCount, error: IStoreUserError) => {
       return error.isServerError ? failureCount < 3 : false
     },
   })
-
-  const modalAction = {
-    show: (user?: IUserForm) => {
-      userCardFormDispatch({
-        type: 'UPDATE',
-        payload: {
-          data: {
-            ...userCardFormState.data,
-            ...(user?.data ?? FORM_USER.data),
-          },
-          errors: {
-            ...userCardFormState.errors,
-            ...(user?.errors ?? FORM_USER.errors),
-          },
-        },
-      })
-      setModalIsVisible(true)
-    },
-    hide: () => setModalIsVisible(false),
-    save: (userFormData: IUserForm['data']) => {
-      const isValide = userFormData.name && userFormData.email
-
-      if (!isValide) {
-        return userCardFormDispatch({
-          type: 'UPDATE',
-          payload: {
-            errors: {
-              ...userCardFormState.errors,
-              name: userFormData.name ? [] : ['O campo nome é obrigatório.'],
-              email: userFormData.email
-                ? []
-                : ['O campo e-mail é obrigatório.'],
-            },
-          },
-        })
-      }
-
-      storeMutation.mutate(userFormData)
-    },
-  }
 
   return (
     <Container>
@@ -124,7 +55,7 @@ export const OptimisticUIUseCase: React.FC = () => {
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={modalAction.show}>
+        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
@@ -142,65 +73,19 @@ export const OptimisticUIUseCase: React.FC = () => {
         </Text>
       )}
 
-      <Modal
-        title="CRIAÇÃO DE USUÁRIO"
+      <UserFormModal
         isVisible={modalIsVisible}
-        onClickOutside={() => !storeMutation.isLoading && modalAction.hide()}
-        body={
-          <UserCardForm
-            {...userCardFormState.data}
-            errors={userCardFormState.errors}
-            onChangeName={(name = '') => {
-              userCardFormDispatch({
-                type: 'UPDATE',
-                payload: { data: { ...userCardFormState.data, name } },
-              })
-            }}
-            onChangeEmail={(email = '') => {
-              userCardFormDispatch({
-                type: 'UPDATE',
-                payload: { data: { ...userCardFormState.data, email } },
-              })
-            }}
-            onChangeAvatar={(avatar = '') => {
-              userCardFormDispatch({
-                type: 'UPDATE',
-                payload: { data: { ...userCardFormState.data, avatar } },
-              })
-            }}
-          />
-        }
-        footer={
-          <>
-            {!storeMutation.isLoading && (
-              <Button type="secondary" onClick={modalAction.hide}>
-                Cancelar
-              </Button>
-            )}
-            <Button
-              type="primary"
-              cursor={storeMutation.isLoading ? 'wait' : 'pointer'}
-              onClick={() =>
-                !storeMutation.isLoading &&
-                modalAction.save(userCardFormState.data)
-              }
-            >
-              {storeMutation.isLoading ? (
-                <Loading
-                  size="18px"
-                  color="bgSecondary"
-                  bgColor="bgPrimary"
-                  margin="0 11.5px"
-                />
-              ) : (
-                'Salvar'
-              )}
-            </Button>
-          </>
-        }
+        onHide={() => setModalIsVisible(false)}
+        onSave={(userCardForm) => {
+          storeMutation.mutate({
+            name: userCardForm.name.value,
+            email: userCardForm.email.value,
+            avatar: userCardForm.avatar.value,
+          })
+        }}
+        isSaving={storeMutation.isLoading}
+        errors={userFormErrors}
       />
     </Container>
   )
 }
-
-export default OptimisticUIUseCase

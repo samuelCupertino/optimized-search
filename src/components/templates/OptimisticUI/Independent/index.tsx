@@ -2,25 +2,14 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
-import { IUserCardProps } from '@/src/components/molecules/UserCard'
-import { IUserCardFormProps } from '@/src/components/molecules/UserCardForm'
-
 import { Button, Loading, Text } from '@/src/components/atoms'
-import { Modal, UserCardForm } from '@/src/components/molecules'
-import { ListOfUserCard } from '@/src/components/organisms'
+import { IUserCardProps } from '@/src/components/molecules'
+import { ListOfUserCard, UserFormModal } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
-
-type IUserFormData = Pick<IUserCardFormProps, 'name' | 'email' | 'avatar'>
-type IUserFormError = IUserCardFormProps['errors']
-
-const FORM_DATA: IUserFormData = { avatar: '', name: '', email: '' }
-const FORM_ERROR: IUserFormError = { avatar: [], name: [], email: [] }
 
 export const OptimisticUIIndependent: React.FC = () => {
   const queryClient = useQueryClient()
   const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [userCardFormData, setUserCardFormData] = useState(FORM_DATA)
-  const [userCardFormError, setUserCardFormError] = useState(FORM_ERROR)
   const { fetchUsers, storeUser } = useUsers()
 
   const { data, isSuccess, isLoading, isError } = useQuery(
@@ -53,35 +42,13 @@ export const OptimisticUIIndependent: React.FC = () => {
     },
   })
 
-  const modalAction = {
-    show: (user?: { data?: IUserFormData; errors?: IUserFormError }) => {
-      setUserCardFormData(user?.data ?? FORM_DATA)
-      setUserCardFormError(user?.errors ?? FORM_ERROR)
-      setModalIsVisible(true)
-    },
-    hide: () => setModalIsVisible(false),
-    save: (userFormData: IUserFormData) => {
-      const isValide = userFormData.name && userFormData.email
-
-      if (!isValide) {
-        return setUserCardFormError({
-          name: userFormData.name ? [] : ['O campo nome é obrigatório.'],
-          email: userFormData.email ? [] : ['O campo e-mail é obrigatório.'],
-        })
-      }
-
-      storeMutation.mutate(userFormData)
-      setModalIsVisible(false)
-    },
-  }
-
   return (
     <Container>
       <HeaderWrapper>
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={modalAction.show}>
+        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
@@ -101,44 +68,17 @@ export const OptimisticUIIndependent: React.FC = () => {
         </Text>
       )}
 
-      <Modal
-        title="CRIAÇÃO DE USUÁRIO"
+      <UserFormModal
         isVisible={modalIsVisible}
-        onClickOutside={modalAction.hide}
-        body={
-          <UserCardForm
-            {...userCardFormData}
-            onChangeName={(name = '') => {
-              setUserCardFormData((oldData) => ({ ...oldData, name }))
-            }}
-            onChangeEmail={(email = '') => {
-              setUserCardFormData((oldData) => ({ ...oldData, email }))
-            }}
-            onChangeAvatar={(avatar = '') => {
-              setUserCardFormData((oldData) => ({ ...oldData, avatar }))
-            }}
-            errors={userCardFormError}
-            onFocusName={() => {
-              setUserCardFormError((oldError) => ({ ...oldError, name: [] }))
-            }}
-            onFocusEmail={() => {
-              setUserCardFormError((oldError) => ({ ...oldError, email: [] }))
-            }}
-          />
-        }
-        footer={
-          <>
-            <Button type="secondary" onClick={modalAction.hide}>
-              Cancelar
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => modalAction.save(userCardFormData)}
-            >
-              Salvar
-            </Button>
-          </>
-        }
+        onHide={() => setModalIsVisible(false)}
+        onSave={(userCardForm) => {
+          storeMutation.mutate({
+            name: userCardForm.name.value,
+            email: userCardForm.email.value,
+            avatar: userCardForm.avatar.value,
+          })
+        }}
+        isSaving={storeMutation.isLoading}
       />
     </Container>
   )

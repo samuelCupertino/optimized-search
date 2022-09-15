@@ -2,27 +2,23 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
-import { IUserCardProps } from '@/src/components/molecules/UserCard'
-import { IUserCardFormProps } from '@/src/components/molecules/UserCardForm'
-import { IMessage } from '@/src/components/organisms/ListOfMessage'
-
 import { Button, Loading, Text } from '@/src/components/atoms'
-import { Modal, UserCardForm } from '@/src/components/molecules'
-import { ListOfMessage, ListOfUserCard } from '@/src/components/organisms'
+import { IUserCardProps } from '@/src/components/molecules'
+import {
+  ListOfMessage,
+  IMessage,
+  useMessageListReducer,
+  ListOfUserCard,
+  UserFormModal,
+} from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
-
-type IUserFormData = Pick<IUserCardFormProps, 'name' | 'email' | 'avatar'>
-type IUserFormError = IUserCardFormProps['errors']
-
-const FORM_DATA: IUserFormData = { avatar: '', name: '', email: '' }
-const FORM_ERROR: IUserFormError = { avatar: [], name: [], email: [] }
 
 export const OptimisticUIDependent: React.FC = () => {
   const queryClient = useQueryClient()
   const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [userCardFormData, setUserCardFormData] = useState(FORM_DATA)
-  const [userCardFormError, setUserCardFormError] = useState(FORM_ERROR)
-  const [errorMessages, setErrorMessages] = useState<IMessage[]>([])
+  const [userFormValues, setUserFormValues] = useState({})
+  const [userFormErrors, setUserFormErrors] = useState({})
+  const { messageListState, messageListDispatch } = useMessageListReducer()
   const { fetchUsers, storeUser } = useUsers()
 
   const { data, isSuccess, isLoading, isError } = useQuery(
@@ -51,37 +47,36 @@ export const OptimisticUIDependent: React.FC = () => {
     onError: (error: IStoreUserError, userFormData, oldUsers) => {
       queryClient.setQueryData(['users'], oldUsers)
 
-      if (error.status === 422) {
-        return setErrorMessages((oldMessages) => [
-          ...oldMessages,
-          {
-            id: oldMessages.length,
-            type: 'warning',
-            title: 'Informações invalidas!',
-            text: `As informações do usuário '${userFormData.name}' são invalidas. Clique aqui para editar.`,
-            onClick: () => {
-              modalAction.show({ data: userFormData, errors: error.data })
-              setErrorMessages(oldMessages)
-            },
-            onClose: () => setErrorMessages(oldMessages),
-          },
-        ])
+      const errorMessageId = messageListState.length
+      const errorMessageStandard: IMessage = {
+        id: errorMessageId,
+        type: 'danger',
+        title: 'Oops... Erro inesperado!',
+        text: `Ocorreu um erro ao salvar o usuário '${userFormData.name}'. Clique aqui para tentar novamente.`,
+        onClick: () => {
+          messageListDispatch({ type: 'REMOVE', payload: errorMessageId })
+          setUserFormValues(userFormData)
+          setUserFormErrors(error.data)
+          setModalIsVisible(true)
+        },
+        onClose: () => {
+          messageListDispatch({ type: 'REMOVE', payload: errorMessageId })
+        },
       }
 
-      setErrorMessages((oldMessages) => [
-        ...oldMessages,
-        {
-          id: oldMessages.length,
-          type: 'danger',
-          title: 'Oops... Erro inesperado!',
-          text: `Ocorreu um erro ao salvar o usuário '${userFormData.name}'. Clique aqui para tentar novamente.`,
-          onClick: () => {
-            modalAction.show({ data: userFormData, errors: error.data })
-            setErrorMessages(oldMessages)
+      if (error.status === 422) {
+        return messageListDispatch({
+          type: 'ADD',
+          payload: {
+            ...errorMessageStandard,
+            type: 'warning',
+            title: 'Informações invalidas!',
+            text: `As informações do usuário '${userFormData.name}' estão invalidas. Clique aqui para editar.`,
           },
-          onClose: () => setErrorMessages(oldMessages),
-        },
-      ])
+        })
+      }
+
+      messageListDispatch({ type: 'ADD', payload: errorMessageStandard })
     },
     onSettled: () => {
       queryClient.invalidateQueries(['users'])
@@ -91,36 +86,16 @@ export const OptimisticUIDependent: React.FC = () => {
     },
   })
 
-  const modalAction = {
-    show: (user?: { data?: IUserFormData; errors?: IUserFormError }) => {
-      setUserCardFormData(user?.data ?? FORM_DATA)
-      setUserCardFormError(user?.errors ?? FORM_ERROR)
-      setModalIsVisible(true)
-    },
-    hide: () => setModalIsVisible(false),
-    save: (userFormData: IUserFormData) => {
-      const isValide = userFormData.name && userFormData.email
-
-      if (!isValide) {
-        return setUserCardFormError({
-          name: userFormData.name ? [] : ['O campo nome é obrigatório.'],
-          email: userFormData.email ? [] : ['O campo e-mail é obrigatório.'],
-        })
-      }
-
-      storeMutation.mutate(userFormData)
-      setModalIsVisible(false)
-    },
-  }
-
   return (
     <Container>
-      {!!errorMessages.length && <ListOfMessage messages={errorMessages} />}
+      {!!messageListState.length && (
+        <ListOfMessage messages={messageListState} />
+      )}
       <HeaderWrapper>
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={modalAction.show}>
+        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
@@ -138,44 +113,19 @@ export const OptimisticUIDependent: React.FC = () => {
         </Text>
       )}
 
-      <Modal
-        title="CRIAÇÃO DE USUÁRIO"
+      <UserFormModal
         isVisible={modalIsVisible}
-        onClickOutside={modalAction.hide}
-        body={
-          <UserCardForm
-            {...userCardFormData}
-            onChangeName={(name = '') => {
-              setUserCardFormData((oldData) => ({ ...oldData, name }))
-            }}
-            onChangeEmail={(email = '') => {
-              setUserCardFormData((oldData) => ({ ...oldData, email }))
-            }}
-            onChangeAvatar={(avatar = '') => {
-              setUserCardFormData((oldData) => ({ ...oldData, avatar }))
-            }}
-            errors={userCardFormError}
-            onFocusName={() => {
-              setUserCardFormError((oldError) => ({ ...oldError, name: [] }))
-            }}
-            onFocusEmail={() => {
-              setUserCardFormError((oldError) => ({ ...oldError, email: [] }))
-            }}
-          />
-        }
-        footer={
-          <>
-            <Button type="secondary" onClick={modalAction.hide}>
-              Cancelar
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => modalAction.save(userCardFormData)}
-            >
-              Salvar
-            </Button>
-          </>
-        }
+        onHide={() => setModalIsVisible(false)}
+        onSave={(userForm) => {
+          storeMutation.mutate({
+            name: userForm.name.value,
+            email: userForm.email.value,
+            avatar: userForm.avatar.value,
+          })
+          setModalIsVisible(false)
+        }}
+        values={userFormValues}
+        errors={userFormErrors}
       />
     </Container>
   )
