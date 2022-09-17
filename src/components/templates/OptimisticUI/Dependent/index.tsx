@@ -15,11 +15,13 @@ import { Container, HeaderWrapper } from './styles'
 
 export const OptimisticUIDependent: React.FC = () => {
   const queryClient = useQueryClient()
-  const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [userFormValues, setUserFormValues] = useState({})
-  const [userFormErrors, setUserFormErrors] = useState({})
-  const { messageListState, messageListDispatch } = useMessageListReducer()
   const { fetchUsers, storeUser } = useUsers()
+  const { messageListState, messageListDispatch } = useMessageListReducer()
+  const [userFormModal, setUserFormModal] = useState({
+    isVisible: false,
+    values: {},
+    errors: {},
+  })
 
   const { data, isSuccess, isLoading, isError } = useQuery(
     ['users'],
@@ -29,6 +31,7 @@ export const OptimisticUIDependent: React.FC = () => {
 
   const storeMutation = useMutation(storeUser, {
     onMutate: async (userFormData) => {
+      setUserFormModal({ ...userFormModal, isVisible: false })
       await queryClient.cancelQueries(['users'])
       const oldUsers =
         queryClient.getQueryData<IUserCardProps[]>(['users']) ?? []
@@ -55,9 +58,12 @@ export const OptimisticUIDependent: React.FC = () => {
         text: `Ocorreu um erro ao salvar o usuário '${userFormData.name}'. Clique aqui para tentar novamente.`,
         onClick: () => {
           messageListDispatch({ type: 'REMOVE', payload: errorMessageId })
-          setUserFormValues(userFormData)
-          setUserFormErrors(error.data)
-          setModalIsVisible(true)
+          setUserFormModal({
+            ...userFormModal,
+            isVisible: true,
+            values: userFormData,
+            errors: error.data,
+          })
         },
         onClose: () => {
           messageListDispatch({ type: 'REMOVE', payload: errorMessageId })
@@ -95,7 +101,12 @@ export const OptimisticUIDependent: React.FC = () => {
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
+        <Button
+          type="secondary"
+          onClick={() => {
+            setUserFormModal({ ...userFormModal, isVisible: true })
+          }}
+        >
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
@@ -114,18 +125,11 @@ export const OptimisticUIDependent: React.FC = () => {
       )}
 
       <UserFormModal
-        isVisible={modalIsVisible}
-        onHide={() => setModalIsVisible(false)}
-        onSave={(userForm) => {
-          storeMutation.mutate({
-            name: userForm.name.value,
-            email: userForm.email.value,
-            avatar: userForm.avatar.value,
-          })
-          setModalIsVisible(false)
-        }}
-        values={userFormValues}
-        errors={userFormErrors}
+        isVisible={userFormModal.isVisible}
+        values={userFormModal.values}
+        errors={userFormModal.errors}
+        onHide={() => setUserFormModal({ ...userFormModal, isVisible: false })}
+        onSave={(userFormData) => storeMutation.mutate(userFormData)}
       />
     </Container>
   )

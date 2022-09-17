@@ -14,7 +14,7 @@ export const Container = styled.ul<IContainer>`
   font-size: ${({ theme, fontSize = 'small' }) => theme.sizes[fontSize]};
   line-height: ${({ lineHeight = '140%' }) => lineHeight};
   color: ${({ theme, color = 'textPrimary' }) => theme.colors[color]};
-  padding: ${({ padding = '0 0 0 10px' }) => padding};
+  padding: ${({ padding = '0 0 0 15px' }) => padding};
   margin: ${({ margin }) => margin};
 `
 

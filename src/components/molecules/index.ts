@@ -1,5 +1,5 @@
 export * from './Search'
 export * from './Modal'
 export * from './UserCard'
-export * from './UserCardForm'
 export * from './Message'
+export * from './TextInput'

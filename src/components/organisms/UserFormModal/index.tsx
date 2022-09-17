@@ -1,101 +1,134 @@
-import { useEffect } from 'react'
-import { Button, Loading } from '@/src/components/atoms'
-import {
-  Modal,
-  UserCardForm,
-  IUserCardFormFields,
-  useUserCardFormReducer,
-} from '@/src/components/molecules'
+import { useMemo } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 
-export type IUserFormModalValues = Partial<
-  Record<keyof IUserCardFormFields, string>
->
+import { Button, Loading, Tooltip, Image, Hr } from '@/src/components/atoms'
+import { Modal, TextInput } from '@/src/components/molecules'
+import { ModalBody, AvatarWrapper, TextWrapper } from './styles'
 
-export type IUserFormModalErrors = Partial<
-  Record<keyof IUserCardFormFields, string[]>
->
+export interface IUserFormFields {
+  avatar: string
+  name: string
+  email: string
+}
+
+export type IUserFormErrors = Partial<Record<keyof IUserFormFields, string[]>>
 
 export interface IUserFormModalProps {
   isVisible: boolean
   isSaving?: boolean
-  data?: IUserCardFormFields
-  values?: IUserFormModalValues
-  errors?: IUserFormModalErrors
+  values?: Partial<IUserFormFields> | null
+  errors?: IUserFormErrors | null
   onHide: () => void
-  onSave: (userCardForm: IUserCardFormFields) => void
+  onSave: (userForm: IUserFormFields) => void
 }
 
 export const UserFormModal: React.FC<IUserFormModalProps> = ({
   isVisible,
   isSaving,
-  data,
   values,
   errors,
   onHide,
   onSave,
 }) => {
-  const { userCardFormState, userCardFormDispatch } = useUserCardFormReducer()
+  const { control, formState, handleSubmit } = useForm<IUserFormFields>({
+    defaultValues: {
+      avatar: values?.avatar ?? '',
+      name: values?.name ?? '',
+      email: values?.email ?? '',
+    },
+  })
 
-  useEffect(() => {
-    data && userCardFormDispatch({ type: 'RESET', payload: data })
-    values && userCardFormDispatch({ type: 'SET_VALUES', payload: values })
-    errors && userCardFormDispatch({ type: 'SET_ERRORS', payload: errors })
-  }, [data, values, errors, userCardFormDispatch])
+  const formErrors = useMemo(() => {
+    const fieldErrors = Object.entries(formState.errors).reduce(
+      (acc, [key, value]) =>
+        value.message ? { ...acc, [key]: [value.message] } : acc,
+      {}
+    )
 
-  const handleSave = () => {
-    if (isSaving) return
-
-    const { name, email } = userCardFormState
-    const isValide = name.value && email.value
-
-    if (!isValide) {
-      return userCardFormDispatch({
-        type: 'SET_ERRORS',
-        payload: {
-          name: name.value ? [] : ['O campo nome é obrigatório.'],
-          email: email.value ? [] : ['O campo e-mail é obrigatório.'],
-        },
-      })
-    }
-
-    onSave(userCardFormState)
-  }
-
-  const handleHide = () => {
-    if (isSaving) return
-
-    userCardFormDispatch({ type: 'RESET' })
-    onHide()
-  }
+    return { ...errors, ...fieldErrors }
+  }, [errors, formState])
 
   return (
     <Modal
       title="CRIAÇÃO DE USUÁRIO"
       isVisible={isVisible}
-      onClickOutside={handleHide}
+      onClickOutside={onHide}
       body={
-        <UserCardForm
-          data={userCardFormState}
-          onChange={(field, value) => {
-            userCardFormDispatch({
-              type: 'SET',
-              field,
-              payload: { value, errors: [] },
-            })
-          }}
-        />
+        <ModalBody>
+          <AvatarWrapper>
+            <Tooltip
+              direction="right"
+              target={
+                <Image
+                  src={'/images/profile.png'}
+                  alt={`foto do usuário a ser cadastrado`}
+                  fallbackSrc="/images/profile.png"
+                  border="3px solid"
+                  borderRadius="50%"
+                />
+              }
+              content={
+                <Controller
+                  name="avatar"
+                  control={control}
+                  render={({ field }) => (
+                    <TextInput
+                      {...field}
+                      errors={formErrors.avatar}
+                      placeholder="Url do avatar"
+                      margin="0 10px 0"
+                    />
+                  )}
+                />
+              }
+            />
+          </AvatarWrapper>
+          <TextWrapper>
+            <Controller
+              name="name"
+              control={control}
+              rules={{
+                required: 'O campo nome é obrigatório.',
+              }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  errors={formErrors.name}
+                  placeholder="Nome"
+                  margin="0 10px 0"
+                />
+              )}
+            />
+            <Hr />
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: 'O campo e-mail é obrigatório.',
+              }}
+              render={({ field }) => (
+                <TextInput
+                  {...field}
+                  errors={formErrors.email}
+                  placeholder="E-mail"
+                  margin="0 10px 0"
+                />
+              )}
+            />
+          </TextWrapper>
+        </ModalBody>
       }
       footer={
         <>
           {!isSaving && (
-            <Button type="secondary" onClick={handleHide}>
+            <Button type="secondary" onClick={onHide}>
               Cancelar
             </Button>
           )}
           <Button
             type="primary"
             cursor={isSaving ? 'wait' : 'pointer'}
-            onClick={handleSave}
+            onClick={handleSubmit(onSave)}
           >
             {isSaving ? (
               <Loading

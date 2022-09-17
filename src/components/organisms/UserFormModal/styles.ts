@@ -23,6 +23,22 @@ export const Container = styled.article<IContainer>`
   }
 `
 
+export const ModalBody = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.bgPrimary};
+  background: ${({ theme }) => theme.colors.bgSecondary};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+`
+
 export const AvatarWrapper = styled.div`
   position: relative;
   padding: 10px;
