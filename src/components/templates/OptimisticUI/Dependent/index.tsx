@@ -5,9 +5,7 @@ import { useUsers, IStoreUserError } from '@/src/services/hooks'
 import { Button, Loading, Text } from '@/src/components/atoms'
 import { IUserCardProps } from '@/src/components/molecules'
 import {
-  ListOfMessage,
-  IMessage,
-  useMessageListReducer,
+  useHttpMessageList,
   ListOfUserCard,
   UserFormModal,
 } from '@/src/components/organisms'
@@ -16,7 +14,7 @@ import { Container, HeaderWrapper } from './styles'
 export const OptimisticUIDependent: React.FC = () => {
   const queryClient = useQueryClient()
   const { fetchUsers, storeUser } = useUsers()
-  const { messageListState, messageListDispatch } = useMessageListReducer()
+  const { HttpMessageList, addHttpMessage } = useHttpMessageList()
   const [userFormModal, setUserFormModal] = useState({
     isVisible: false,
     values: {},
@@ -33,58 +31,42 @@ export const OptimisticUIDependent: React.FC = () => {
     onMutate: async (userFormData) => {
       setUserFormModal({ ...userFormModal, isVisible: false })
       await queryClient.cancelQueries(['users'])
-      const oldUsers =
-        queryClient.getQueryData<IUserCardProps[]>(['users']) ?? []
 
-      const uniqueString = Date.now().toString(36)
+      const uniqueString = Date.now().toString(36).split('').reverse().join('')
       const optimisticUser: IUserCardProps = {
         ...userFormData,
         id: uniqueString.padEnd(10, uniqueString),
         loading: ['id'],
       }
 
-      queryClient.setQueryData(['users'], [optimisticUser, ...oldUsers])
+      queryClient.setQueryData<IUserCardProps[]>(['users'], (oldUsers = []) => {
+        return [optimisticUser, ...oldUsers]
+      })
 
-      return oldUsers
+      return { optimisticUser }
     },
-    onError: (error: IStoreUserError, userFormData, oldUsers) => {
-      queryClient.setQueryData(['users'], oldUsers)
+    onError: (error: IStoreUserError, userFormData, context) => {
+      const optimisticUser = context?.optimisticUser as IUserCardProps
 
-      const errorMessageId = messageListState.length
-      const errorMessageStandard: IMessage = {
-        id: errorMessageId,
-        type: 'danger',
-        title: 'Oops... Erro inesperado!',
-        text: `Ocorreu um erro ao salvar o usuário '${userFormData.name}'. Clique aqui para tentar novamente.`,
-        onClick: () => {
-          messageListDispatch({ type: 'REMOVE', payload: errorMessageId })
-          setUserFormModal({
-            ...userFormModal,
-            isVisible: true,
-            values: userFormData,
-            errors: error.data,
-          })
-        },
-        onClose: () => {
-          messageListDispatch({ type: 'REMOVE', payload: errorMessageId })
-        },
-      }
+      queryClient.setQueryData<IUserCardProps[]>(['users'], (users = []) => {
+        return users.filter((user) => user.id !== optimisticUser.id)
+      })
 
       if (error.status === 422) {
-        return messageListDispatch({
-          type: 'ADD',
-          payload: {
-            ...errorMessageStandard,
-            type: 'warning',
-            title: 'Informações invalidas!',
-            text: `As informações do usuário '${userFormData.name}' estão invalidas. Clique aqui para editar.`,
-          },
+        return addHttpMessage({
+          status: 422,
+          from: `do usuário ${userFormData.name}`,
         })
       }
 
-      messageListDispatch({ type: 'ADD', payload: errorMessageStandard })
+      addHttpMessage({ from: `do usuário ${userFormData.name}` })
     },
     onSettled: () => {
+      const [lastUser] =
+        queryClient.getQueryData<IUserCardProps[]>(['users']) ?? []
+
+      if (lastUser.loading) return
+
       queryClient.invalidateQueries(['users'])
     },
     retry: (failureCount, error: IStoreUserError) => {
@@ -94,9 +76,7 @@ export const OptimisticUIDependent: React.FC = () => {
 
   return (
     <Container>
-      {!!messageListState.length && (
-        <ListOfMessage messages={messageListState} />
-      )}
+      <HttpMessageList />
       <HeaderWrapper>
         <Text type="primary" padding="10px">
           Lista de contatos:

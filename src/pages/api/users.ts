@@ -19,7 +19,7 @@ export default async function handler(
   if (req.method === 'POST') {
     const newUser: Pick<IUser, 'avatar' | 'name' | 'email'> = req.body
 
-    await delay(3000)
+    await delay(15000)
     if (!newUser.name || !newUser.email) {
       return res.status(422).json({
         ...(newUser.name ? { name: ['O campo name é obrigatório.'] } : {}),

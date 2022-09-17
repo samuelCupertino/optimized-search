@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 
 import { Button, Loading, Tooltip, Image, Hr } from '@/src/components/atoms'
 import { Modal, TextInput } from '@/src/components/molecules'
@@ -57,11 +57,15 @@ export const UserFormModal: React.FC<IUserFormModalProps> = ({
     return { ...errors, ...fieldErrors }
   }, [errors, formState])
 
+  const handleSave: SubmitHandler<IUserFormFields> = (data) => {
+    if (formState.isSubmitted) return
+    onSave(data)
+  }
+
   return (
     <Modal
       title="CRIAÇÃO DE USUÁRIO"
       isVisible={isVisible}
-      onClickOutside={onHide}
       body={
         <ModalBody>
           <AvatarWrapper>
@@ -120,10 +124,6 @@ export const UserFormModal: React.FC<IUserFormModalProps> = ({
               control={control}
               rules={{
                 required: 'O campo e-mail é obrigatório.',
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: 'Informe um e-mail válido.',
-                },
               }}
               render={({ field }) => (
                 <TextInput
@@ -147,7 +147,7 @@ export const UserFormModal: React.FC<IUserFormModalProps> = ({
           <Button
             type="primary"
             cursor={isSaving ? 'wait' : 'pointer'}
-            onClick={handleSubmit(onSave)}
+            onClick={handleSubmit(handleSave)}
           >
             {isSaving ? (
               <Loading

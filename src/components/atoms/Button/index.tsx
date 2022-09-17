@@ -1,6 +1,6 @@
-import { ButtonComponent, IButtonComponent } from './styles'
+import { Container, IContainer, ButtonComponent } from './styles'
 
-interface IButtonProps extends IButtonComponent {
+interface IButtonProps extends IContainer {
   children: React.ReactNode
   onClick?: () => void
 }
@@ -8,11 +8,17 @@ interface IButtonProps extends IButtonComponent {
 export const Button: React.FC<IButtonProps> = ({
   children,
   onClick,
+  type,
+  color,
+  margin,
+  padding,
   ...props
 }) => {
   return (
-    <ButtonComponent onClick={onClick} {...props}>
-      {children}
-    </ButtonComponent>
+    <Container {...{ ...props, padding, margin, type, color }}>
+      <ButtonComponent onClick={onClick} {...props}>
+        {children}
+      </ButtonComponent>
+    </Container>
   )
 }
