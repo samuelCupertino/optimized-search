@@ -1,15 +1,14 @@
-import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
 import { Button, Loading, Text } from '@/src/components/atoms'
 import { IUserCardProps } from '@/src/components/molecules'
-import { ListOfUserCard, UserFormModal } from '@/src/components/organisms'
+import { ListOfUserCard, useUserFormModal } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
 export const OptimisticUIIndependent: React.FC = () => {
   const queryClient = useQueryClient()
-  const [modalIsVisible, setModalIsVisible] = useState(false)
+  const UserFormModal = useUserFormModal()
   const { fetchUsers, storeUser } = useUsers()
 
   const { data, isSuccess, isLoading, isError } = useQuery(
@@ -48,7 +47,10 @@ export const OptimisticUIIndependent: React.FC = () => {
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
+        <Button
+          type="secondary"
+          onClick={() => UserFormModal.setIsVisible(true)}
+        >
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
@@ -68,18 +70,7 @@ export const OptimisticUIIndependent: React.FC = () => {
         </Text>
       )}
 
-      <UserFormModal
-        isVisible={modalIsVisible}
-        onHide={() => setModalIsVisible(false)}
-        onSave={(userCardForm) => {
-          storeMutation.mutate({
-            name: userCardForm.name.value,
-            email: userCardForm.email.value,
-            avatar: userCardForm.avatar.value,
-          })
-        }}
-        isSaving={storeMutation.isLoading}
-      />
+      <UserFormModal.component onSave={storeMutation.mutate} />
     </Container>
   )
 }

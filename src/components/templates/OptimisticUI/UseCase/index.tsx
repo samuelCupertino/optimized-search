@@ -1,20 +1,14 @@
-import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
 import { Button, Loading, Text } from '@/src/components/atoms'
 import { IUserCardProps } from '@/src/components/molecules'
-import {
-  ListOfUserCard,
-  UserFormModal,
-  IUserFormModalErrors,
-} from '@/src/components/organisms'
+import { ListOfUserCard, useUserFormModal } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
 export const OptimisticUIUseCase: React.FC = () => {
   const queryClient = useQueryClient()
-  const [modalIsVisible, setModalIsVisible] = useState(false)
-  const [userFormErrors, setUserFormErrors] = useState<IUserFormModalErrors>({})
+  const UserFormModal = useUserFormModal()
   const { storeUser, fetchUsers } = useUsers()
 
   const { data, isSuccess, isFetching, isError } = useQuery(
@@ -31,18 +25,16 @@ export const OptimisticUIUseCase: React.FC = () => {
       return oldUsers
     },
     onSuccess: () => {
-      setModalIsVisible(false)
-      setUserFormErrors({})
+      UserFormModal.setIsVisible(false)
+      UserFormModal.setErrors(null)
+      queryClient.invalidateQueries(['users'])
     },
     onError: (error: IStoreUserError, _userCardForm, oldUsers) => {
       if (error.status === 422) {
-        setUserFormErrors(error.data)
+        UserFormModal.setErrors(error.data)
       }
 
       queryClient.setQueryData(['users'], oldUsers)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries(['users'])
     },
     retry: (failureCount, error: IStoreUserError) => {
       return error.isServerError ? failureCount < 3 : false
@@ -55,7 +47,10 @@ export const OptimisticUIUseCase: React.FC = () => {
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
-        <Button type="secondary" onClick={() => setModalIsVisible(true)}>
+        <Button
+          type="secondary"
+          onClick={() => UserFormModal.setIsVisible(true)}
+        >
           + Adicionar Contato
         </Button>
       </HeaderWrapper>
@@ -73,18 +68,9 @@ export const OptimisticUIUseCase: React.FC = () => {
         </Text>
       )}
 
-      <UserFormModal
-        isVisible={modalIsVisible}
-        onHide={() => setModalIsVisible(false)}
-        onSave={(userCardForm) => {
-          storeMutation.mutate({
-            name: userCardForm.name.value,
-            email: userCardForm.email.value,
-            avatar: userCardForm.avatar.value,
-          })
-        }}
+      <UserFormModal.component
+        onSave={storeMutation.mutate}
         isSaving={storeMutation.isLoading}
-        errors={userFormErrors}
       />
     </Container>
   )

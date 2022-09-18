@@ -7,34 +7,41 @@ export interface IContainer {
 }
 
 const animShowModal = keyframes`
-  from {
-    opacity: 0
+  0% {
+    opacity: 0;
+    visibility: visible;
   }
-  to {
-    opacity: 1
+  100% {
+    opacity: 1;
+    visibility: visible;
   }
 `
 const animHideModal = keyframes`
-  from {
-    opacity: 1
+  0% {
+    opacity: 1;
+    visibility: visible;
   }
-  to {
-    opacity: 0
+  99% {
+    opacity: 0;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
   }
 `
 
 export const Container = styled.div<IContainer>`
+  visibility: hidden;
   display: flex;
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
   justify-content: center;
   align-items: center;
   position: absolute;
   inset: 0;
   backdrop-filter: brightness(0.5) blur(1px);
   z-index: 1000;
-  transition: visibility 0.5s ease-in-out;
   animation: ${({ isVisible }) => (isVisible ? animShowModal : animHideModal)}
-    0.5s ease-in-out;
+    0.5s ease-in-out forwards;
 `
 
 export const ModalContent = styled.div`

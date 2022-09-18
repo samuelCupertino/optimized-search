@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useUsers, IStoreUserError } from '@/src/services/hooks'
 
@@ -6,20 +5,16 @@ import { Button, Loading, Text } from '@/src/components/atoms'
 import { IUserCardProps } from '@/src/components/molecules'
 import {
   useHttpMessageList,
+  useUserFormModal,
   ListOfUserCard,
-  UserFormModal,
 } from '@/src/components/organisms'
 import { Container, HeaderWrapper } from './styles'
 
 export const OptimisticUIDependent: React.FC = () => {
   const queryClient = useQueryClient()
+  const HttpMessageList = useHttpMessageList()
+  const UserFormModal = useUserFormModal()
   const { fetchUsers, storeUser } = useUsers()
-  const { HttpMessageList, addHttpMessage } = useHttpMessageList()
-  const [userFormModal, setUserFormModal] = useState({
-    isVisible: false,
-    values: {},
-    errors: {},
-  })
 
   const { data, isSuccess, isLoading, isError } = useQuery(
     ['users'],
@@ -29,7 +24,6 @@ export const OptimisticUIDependent: React.FC = () => {
 
   const storeMutation = useMutation(storeUser, {
     onMutate: async (userFormData) => {
-      setUserFormModal({ ...userFormModal, isVisible: false })
       await queryClient.cancelQueries(['users'])
 
       const uniqueString = Date.now().toString(36).split('').reverse().join('')
@@ -52,14 +46,18 @@ export const OptimisticUIDependent: React.FC = () => {
         return users.filter((user) => user.id !== optimisticUser.id)
       })
 
-      if (error.status === 422) {
-        return addHttpMessage({
-          status: 422,
-          from: `do usuário ${userFormData.name}`,
-        })
+      const newMessage = {
+        from: `do usuário '${userFormData.name}'`,
+        onClick: () => {
+          UserFormModal.set({ values: userFormData, errors: error.data })
+        },
       }
 
-      addHttpMessage({ from: `do usuário ${userFormData.name}` })
+      if (error.status === 422) {
+        return HttpMessageList.add({ ...newMessage, status: 422 })
+      }
+
+      HttpMessageList.add(newMessage)
     },
     onSettled: () => {
       const [lastUser] =
@@ -76,21 +74,15 @@ export const OptimisticUIDependent: React.FC = () => {
 
   return (
     <Container>
-      <HttpMessageList />
+      <HttpMessageList.component />
+
       <HeaderWrapper>
         <Text type="primary" padding="10px">
           Lista de contatos:
         </Text>
         <Button
           type="secondary"
-          onClick={() => {
-            setUserFormModal({
-              ...userFormModal,
-              isVisible: true,
-              values: {},
-              errors: {},
-            })
-          }}
+          onClick={() => UserFormModal.setIsVisible(true)}
         >
           + Adicionar Contato
         </Button>
@@ -109,13 +101,7 @@ export const OptimisticUIDependent: React.FC = () => {
         </Text>
       )}
 
-      <UserFormModal
-        isVisible={userFormModal.isVisible}
-        values={userFormModal.values}
-        errors={userFormModal.errors}
-        onHide={() => setUserFormModal({ ...userFormModal, isVisible: false })}
-        onSave={storeMutation.mutate}
-      />
+      <UserFormModal.component onSave={storeMutation.mutate} />
     </Container>
   )
 }

@@ -35,7 +35,7 @@ interface IAddHttpMessage {
   direction?: 'start' | 'end'
   from?: string
   onClick?: () => void
-  onChange?: () => void
+  onClose?: () => void
 }
 
 const messagesHttpStandard: IHttpMessageStandard = {
@@ -54,9 +54,9 @@ const messagesHttpStandard: IHttpMessageStandard = {
 export const useHttpMessageList = (initialState: IHttpMessage[] = []) => {
   const [httpMessageList, setHttpMessageList] = useState(initialState)
 
-  const addHttpMessage = (options: IAddHttpMessage) => {
+  const add = (options: IAddHttpMessage) => {
     setHttpMessageList((messages) => {
-      const newMessageId = messages.length + 1
+      const newMessageId = +Date.now().toString().split('').reverse().join('')
       const newMessageProps = messagesHttpStandard[options.status ?? 'default']
 
       const newMessage = {
@@ -64,12 +64,12 @@ export const useHttpMessageList = (initialState: IHttpMessage[] = []) => {
         id: newMessageId,
         text: newMessageProps.text.replace('{from}', options.from ?? ''),
         onClick: () => {
-          removeHttpMessage(newMessageId)
+          remove(newMessageId)
           options.onClick?.()
         },
         onClose: () => {
-          removeHttpMessage(newMessageId)
-          options.onChange?.()
+          remove(newMessageId)
+          options.onClose?.()
         },
       }
 
@@ -79,7 +79,7 @@ export const useHttpMessageList = (initialState: IHttpMessage[] = []) => {
     })
   }
 
-  const removeHttpMessage = (messageId: number) => {
+  const remove = (messageId: number) => {
     setHttpMessageList((messages) => {
       return messages.filter((message) => message.id !== messageId)
     })
@@ -90,9 +90,5 @@ export const useHttpMessageList = (initialState: IHttpMessage[] = []) => {
     return <HttpMessageList messages={httpMessageList} />
   }
 
-  return {
-    addHttpMessage,
-    removeHttpMessage,
-    HttpMessageList: component,
-  }
+  return { component, add, remove }
 }
